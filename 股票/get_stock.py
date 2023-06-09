@@ -46,14 +46,14 @@ class get_stock_ed():
             amplitude= round(((get_stock_ed.high(self)[i]-get_stock_ed.low(self)[i])/get_stock_ed.low(self)[i])*100,3)
             all_amplitude.append(amplitude)
         return all_amplitude
-#               收盤後資訊
-#-------------------------------------
+
    
 class get_stock_ing():
     def __init__(self,code) -> None:
         self.__code=code
-
-    def all_information(self):
+    #------------------------------
+    #       獲取盤中資料
+    def get_all_information(self):
         return self.__code
     
     #獲得info裡面個別資料
@@ -75,37 +75,38 @@ class get_stock_ing():
     def get_realtime(self):
         return self.__code["realtime"]
     #買進價格
-    def best_bid_price(self):
+    def get_best_bid_price(self):
         return self.__code["realtime"]["best_bid_price"][-1]
     #買進數量
-    def best_bid_volume(self):
+    def get_best_bid_volume(self):
         return self.__code["realtime"]["best_bid_volume"][-1]
     #賣出價格
-    def best_ask_price(self):
+    def get_best_ask_price(self):
         return self.__code["realtime"]["best_ask_price"][-1]
     #賣出數量
-    def best_ask_volume(self):
+    def get_best_ask_volume(self):
         return self.__code["realtime"]["best_ask_volume"][-1]
     
     #開盤
-    def open(self):
+    def get_open(self):
         return self.__code["realtime"]["open"]
     #高點
-    def high(self):
+    def get_high(self):
         return self.__code["realtime"]["high"]
     #低點
-    def low(self):
+    def get_low(self):
         return self.__code["realtime"]["low"]
     
     #振幅
-    def amplitude(self):
-        return round(((float(get_stock_ing.high(self))-float(get_stock_ing.low(self)))/float(get_stock_ing.low(self)))*100,3)
+    def get_amplitude(self):
+        return round(((float(get_stock_ing.get_high(self))-float(get_stock_ing.get_low(self)))/float(get_stock_ing.get_low(self)))*100,3)
 
-
+    
+        
         
 
     
-
+"""
 stock_data = twstock.realtime.get(["0050", "0052","0056","2330"])
 
 for stock_code in stock_data:
@@ -114,6 +115,6 @@ for stock_code in stock_data:
         break
 
     stock=get_stock_ing(stock_data[stock_code])
-    print(stock.get_code())
+    print(stock.get_name())
     
-
+"""
