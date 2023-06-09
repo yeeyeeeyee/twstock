@@ -51,16 +51,54 @@ class get_stock_ed():
    
 class get_stock_ing():
     def __init__(self,code) -> None:
-        self.code=code
-    def get(self):
-        if type(self.code)==list:
-            list_stock=[]
-            for i in self.code:
-                list_stock.append(twstock.realtime.get(i))
-            return list_stock[0]
-            
-        else:
-            return twstock.realtime.get(self.code)
+        self.__code=code
+        self.__stock=twstock.realtime.get(self.__code)
+
+    def all_information(self):
+        return self.__stock
+    
+    #獲得info裡面個別資料
+    def get_info(self):
+        return self.__stock["info"]
+    #獲得時間
+    def get_time(self):
+        return self.__stock["info"]["time"]
+    #獲得代號
+    def get_code(self):
+        return self.__stock["info"]["code"]
+    #獲得名稱
+    def get_name(self):
+        return self.__stock["info"]["name"]
+    
+    #獲得realtime裡面個別資料
+    def get_realtime(self):
+        return self.__stock["realtime"]
+    #買進價格
+    def best_bid_price(self):
+        return self.__stock["realtime"]["best_bid_price"][-1]
+    #買進數量
+    def best_bid_volume(self):
+        return self.__stock["realtime"]["best_bid_volume"][-1]
+    #賣出價格
+    def best_ask_price(self):
+        return self.__stock["realtime"]["best_ask_price"][-1]
+    #賣出數量
+    def best_ask_volume(self):
+        return self.__stock["realtime"]["best_ask_volume"][-1]
+    
+    #開盤
+    def open(self):
+        return self.__stock["realtime"]["open"]
+    #高點
+    def high(self):
+        return self.__stock["realtime"]["high"]
+    #低點
+    def low(self):
+        return self.__stock["realtime"]["low"]
+    
+    def amplitude(self):
+        return round(((float(get_stock_ing.high(self))-float(get_stock_ing.low(self)))/float(get_stock_ing.low(self)))*100,3)
+
 
         
 
@@ -69,5 +107,6 @@ class get_stock_ing():
 
 
 stock=get_stock_ing("0050")
-print(stock.get())
+print(stock.all_information())
+print(stock.amplitude())
 
