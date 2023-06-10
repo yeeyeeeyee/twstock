@@ -105,16 +105,18 @@ class get_stock_ing():
         
         
 
-    
-"""
-stock_data = twstock.realtime.get(["0050", "0052","0056","2330"])
+#資料內容 ->文字型態    
+def get_list(data_list:list):
+    stock_data = twstock.realtime.get(data_list)
 
-for stock_code in stock_data:
-    #最後一個會是succcess,所以在最後一個前停下來
-    if "success" == stock_code:
-        break
+    for stock_code in stock_data:
+        #最後一個會是succcess,所以在最後一個前停下來
+        if "success" == stock_code:
+            break
 
-    stock=get_stock_ing(stock_data[stock_code])
-    print(stock.get_name())
+        stock=get_stock_ing(stock_data[stock_code])
+        print(stock.get_name())
     
-"""
+
+if __name__ == "__main__":
+    get_list(["0050","0052"])
