@@ -1,4 +1,5 @@
 import twstock
+import time
 
 class get_stock_ed():
     def __init__(self,code,during_star=-1,during_end=None) -> None:
@@ -127,8 +128,23 @@ def get_list(data_list:list):
             break
 
         stock=get_stock_ing(stock_data[stock_code])
-        print(stock.get_trade_volume())
+        print(stock.get_name())
     
+#資料內容 ->文字型態    
+def ed(data_list:list):
+    
+
+    for stock_code in data_list:
+        #最後一個會是succcess,所以在最後一個前停下來
+        if "success" == stock_code:
+            break
+        
+
+        stock=get_stock_ed(stock_code)
+        print(stock.id())
+        #可15秒可以用
+        time.sleep(15)
 
 if __name__ == "__main__":
     get_list(["0050"])
+    ed(["006204"])
