@@ -78,6 +78,9 @@ class get_stock_ing():
     def get_accumulate_trade_volume(self):
         return self.__code["realtime"]["accumulate_trade_volume"]
     
+    def get_latest_trade_price(self):
+        return self.__code["realtime"]["latest_trade_price"]
+    
     #買進價格
     def get_best_bid_price(self):
         return self.__code["realtime"]["best_bid_price"][-1]
