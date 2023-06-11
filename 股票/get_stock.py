@@ -75,6 +75,8 @@ class get_stock_ing():
     def get_realtime(self):
         return self.__code["realtime"]
     
+    def get_accumulate_trade_volume(self):
+        return self.__code["realtime"]["accumulate_trade_volume"]
     
     #買進價格
     def get_best_bid_price(self):
@@ -117,8 +119,8 @@ def get_list(data_list:list):
             break
 
         stock=get_stock_ing(stock_data[stock_code])
-        print(stock.get_name())
+        print(stock.get_accumulate_trade_volume())
     
 
 if __name__ == "__main__":
-    get_list(["0050","0052"])
+    get_list(["0050"])
