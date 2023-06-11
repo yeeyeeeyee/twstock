@@ -74,6 +74,8 @@ class get_stock_ing():
     #獲得realtime裡面個別資料
     def get_realtime(self):
         return self.__code["realtime"]
+    
+    
     #買進價格
     def get_best_bid_price(self):
         return self.__code["realtime"]["best_bid_price"][-1]
