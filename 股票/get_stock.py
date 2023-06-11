@@ -74,10 +74,10 @@ class get_stock_ing():
     #獲得realtime裡面個別資料
     def get_realtime(self):
         return self.__code["realtime"]
-    
+    #成交量
     def get_accumulate_trade_volume(self):
         return self.__code["realtime"]["accumulate_trade_volume"]
-    
+    #成交價
     def get_latest_trade_price(self):
         return self.__code["realtime"]["latest_trade_price"]
     
