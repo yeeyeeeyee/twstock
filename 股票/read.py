@@ -17,7 +17,9 @@ print(data_list)
 #get_stock.ed(data_list)
 #get_stock.get_list(data_list)
 
-#測試5秒會不會被封 答案是不會
+
+'''
+測試5秒會不會被封 答案是不會
 count=0
 while 1:
     try:
@@ -27,7 +29,7 @@ while 1:
         time.sleep(5)
     except:
         break
-
+'''
 
 
 

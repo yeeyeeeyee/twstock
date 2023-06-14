@@ -139,13 +139,15 @@ def ed(data_list:list):
         #最後一個會是succcess,所以在最後一個前停下來
         if "success" == stock_code:
             break
-        
-
         stock=get_stock_ed(stock_code)
+        #列印出資料
         print(stock.id())
         #可15秒可以用
         time.sleep(15)
 
 if __name__ == "__main__":
+
+
+
     get_list(["0050"])
     #ed(["006204"])
