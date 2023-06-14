@@ -64,6 +64,7 @@ class get_stock_ing():
     def get_time(self):
         time=self.__code["info"]["time"]
         time=time.split(" ")
+        #回傳格式  ('2023-06-14', '14:30:00')
         return time[0],time[1]
     #獲得代號
     def get_code(self):
