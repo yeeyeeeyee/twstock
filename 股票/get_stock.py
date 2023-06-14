@@ -115,7 +115,7 @@ class get_stock_ing():
         return round(((float(get_stock_ing.get_high(self))-float(get_stock_ing.get_low(self)))/float(get_stock_ing.get_low(self)))*100,3)
 
     
-        
+#-------------------------------------------------------------        
         
 
 #資料內容 ->文字型態    
