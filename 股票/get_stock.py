@@ -64,7 +64,7 @@ class get_stock_ing():
     def get_time(self):
         time=self.__code["info"]["time"]
         time=time.split(" ")
-        return time[0]
+        return time[0],time[1]
     #獲得代號
     def get_code(self):
         return self.__code["info"]["code"]
@@ -128,7 +128,7 @@ def get_list(data_list:list):
             break
 
         stock=get_stock_ing(stock_data[stock_code])
-        print(stock.get_name())
+        print(stock.get_time())
     
 #資料內容 ->文字型態    
 def ed(data_list:list):
@@ -147,4 +147,4 @@ def ed(data_list:list):
 
 if __name__ == "__main__":
     get_list(["0050"])
-    ed(["006204"])
+    #ed(["006204"])
