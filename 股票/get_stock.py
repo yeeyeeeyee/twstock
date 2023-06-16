@@ -1,5 +1,6 @@
 import twstock
 import time
+import xlwings as xw
 
 class get_stock_ed():
     def __init__(self,code,during_star=-1,during_end=None) -> None:
@@ -115,8 +116,16 @@ class get_stock_ing():
     def get_amplitude(self):
         return round(((float(get_stock_ing.get_high(self))-float(get_stock_ing.get_low(self)))/float(get_stock_ing.get_low(self)))*100,3)
 
-    
-#-------------------------------------------------------------        
+    def input_data(self):
+        # 修改数据
+        sheet.range("B2").value = get_stock_ing.get_name(self)
+        sheet.range("A2").value = get_stock_ing.get_code(self)
+        sheet.autofit()
+
+        
+        # 保存修改（可选）
+        workbook.save()
+#--------------------------------------------------------------------        
         
 
 #資料內容 ->文字型態    
@@ -129,7 +138,9 @@ def get_list(data_list:list):
             break
 
         stock=get_stock_ing(stock_data[stock_code])
-        print(stock.get_time())
+        stock.input_data()
+        #列印出資料
+        print(stock.get_name())
     
 #資料內容 ->文字型態    
 def ed(data_list:list):
@@ -147,7 +158,18 @@ def ed(data_list:list):
 
 if __name__ == "__main__":
 
+    # 连接到已打开的Excel应用程序
+    app = xw.App(visible=True,add_book=False)
+
+    # 获取活动工作簿
+    workbook = app.books.open("data.xlsx")
+
+    # 获取活动工作表
+    sheet = workbook.sheets.active
+
+
 
 
     get_list(["0050"])
     #ed(["006204"])
+    
