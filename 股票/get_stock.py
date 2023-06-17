@@ -81,11 +81,11 @@ class get_stock_ing():
     #成交價
     def get_latest_trade_price(self):
         return self.__code["realtime"]["latest_trade_price"]
-    
+    #成交量
     def get_trade_volume(self):
         return self.__code["realtime"]["trade_volume"]
     
-     #成交量
+    #總成交量
     def get_accumulate_trade_volume(self):
         return self.__code["realtime"]["accumulate_trade_volume"]
     
@@ -119,8 +119,20 @@ class get_stock_ing():
     def input_data(self):
         # 修改数据
         sheet.range("B2").value = get_stock_ing.get_name(self)
-        sheet.range("A2").value = get_stock_ing.get_code(self)
-        sheet.autofit()
+        sheet.range("C2").value = get_stock_ing.get_best_bid_price(self)
+        sheet.range("D2").value = get_stock_ing.get_best_ask_price(self)
+        sheet.range("E2").value = get_stock_ing.get_latest_trade_price(self)
+        sheet.range("F2").value ="-"
+        sheet.range("G2").value ="-"
+        sheet.range("H2").value =get_stock_ing.get_trade_volume(self)
+        sheet.range("I2").value =get_stock_ing.get_best_bid_volume(self)
+        sheet.range("J2").value =get_stock_ing.get_best_ask_volume(self)
+        sheet.range("K2").value =get_stock_ing.get_accumulate_trade_volume(self)
+        sheet.range("L2").value =get_stock_ing.get_high(self)
+        sheet.range("M2").value =get_stock_ing.get_low(self)
+        sheet.range("N2").value =get_stock_ing.get_open(self)
+        #自動調整名稱寬度
+        sheet.range("B:B").autofit()
 
         
         # 保存修改（可选）
@@ -129,7 +141,7 @@ class get_stock_ing():
         
 
 #資料內容 ->文字型態    
-def get_list(data_list:list):
+def ing(data_list:list):
     stock_data = twstock.realtime.get(data_list)
 
     for stock_code in stock_data:
@@ -139,22 +151,24 @@ def get_list(data_list:list):
 
         stock=get_stock_ing(stock_data[stock_code])
         stock.input_data()
-        #列印出資料
-        print(stock.get_name())
+        print(stock.get_realtime())
     
 #資料內容 ->文字型態    
 def ed(data_list:list):
     
-
     for stock_code in data_list:
         #最後一個會是succcess,所以在最後一個前停下來
         if "success" == stock_code:
             break
         stock=get_stock_ed(stock_code)
+    
         #列印出資料
-        print(stock.id())
+        print(stock.price())
         #可15秒可以用
         time.sleep(15)
+
+
+
 
 if __name__ == "__main__":
 
@@ -170,6 +184,6 @@ if __name__ == "__main__":
 
 
 
-    get_list(["0050"])
-    #ed(["006204"])
+    ing(["0050"])
+    #ed(["0050"])
     
