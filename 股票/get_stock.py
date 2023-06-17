@@ -178,13 +178,15 @@ def ed(data_list:list):
 
 
 if __name__ == "__main__":
-
-    # 连接到已打开的Excel应用程序
-    app = xw.App(visible=True,add_book=False)
-
-    # 获取活动工作簿
-    workbook = app.books.open("88.xlsx")
-
+    #判斷有沒有開著exl
+    try:
+        workbook=xw.Book("88.xlsx")
+    except:
+         # 连接到已打开的Excel应用程序
+        app = xw.App(visible=True,add_book=False)
+        # 获取活动工作簿
+        workbook = app.books.open("88.xlsx")
+    
     # 获取活动工作表
     sheet = workbook.sheets.active
 
