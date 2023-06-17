@@ -48,6 +48,10 @@ class get_stock_ed():
             amplitude= round(((get_stock_ed.high(self)[i]-get_stock_ed.low(self)[i])/get_stock_ed.low(self)[i])*100,3)
             all_amplitude.append(amplitude)
         return all_amplitude
+    
+    def InputData(self):
+        sheet.range("F2").value =get_stock_ed.change(self)
+        sheet.range("G2").value =get_stock_ed.amplitude(self)
 
    
 class get_stock_ing():
@@ -115,7 +119,9 @@ class get_stock_ing():
     #振幅
     def get_amplitude(self):
         return round(((float(get_stock_ing.get_high(self))-float(get_stock_ing.get_low(self)))/float(get_stock_ing.get_low(self)))*100,3)
-
+    
+    
+    #填入資料
     def input_data(self):
         # 修改数据
         sheet.range("B2").value = get_stock_ing.get_name(self)
@@ -135,7 +141,7 @@ class get_stock_ing():
         sheet.range("B:B").autofit()
 
         
-        # 保存修改（可选）
+        # 保存修改
         workbook.save()
 #--------------------------------------------------------------------        
         
@@ -150,6 +156,7 @@ def ing(data_list:list):
             break
 
         stock=get_stock_ing(stock_data[stock_code])
+        #呼叫填入資料
         stock.input_data()
         print(stock.get_realtime())
     
@@ -161,9 +168,9 @@ def ed(data_list:list):
         if "success" == stock_code:
             break
         stock=get_stock_ed(stock_code)
-    
+        stock.InputData()
         #列印出資料
-        print(stock.price())
+        #print(stock.price())
         #可15秒可以用
         time.sleep(15)
 
@@ -176,7 +183,7 @@ if __name__ == "__main__":
     app = xw.App(visible=True,add_book=False)
 
     # 获取活动工作簿
-    workbook = app.books.open("data.xlsx")
+    workbook = app.books.open("88.xlsx")
 
     # 获取活动工作表
     sheet = workbook.sheets.active
@@ -184,6 +191,6 @@ if __name__ == "__main__":
 
 
 
-    ing(["0050"])
-    #ed(["0050"])
+    #ing(["0050"])
+    ed(["0050"])
     
