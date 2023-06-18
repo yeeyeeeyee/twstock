@@ -2,182 +2,164 @@ import twstock
 import time
 import xlwings as xw
 
-class get_stock_ed():
-    def __init__(self,code,during_star=-1,during_end=None) -> None:
-        self.__code=code
-        self.__during_star=during_star
-        self.__during_end=during_end
-        self.__stock=twstock.Stock(self.__code)
+class StockData:
+    def __init__(self, code):
+        self.code = code
+        self.stock = twstock.Stock(code)
+        
+    def get_info(self):
+        return twstock.codes[self.code]
 
-#--------------------------------------   
-#           收盤後資訊
- 
-    #獲得輸入股票基本資訊
-    def info(self)->list:
-        return twstock.codes[self.__code]
-    #股票id
-    def id(self)->str:
-        return self.__stock.sid
-    #獲取日期
-    def date(self)->list:
-        return self.__stock.date[self.__during_star:self.__during_end]
-    #獲得漲跌
-    def change(self):
-        return self.__stock.change[self.__during_star:self.__during_end]
-    #獲得高點
-    def high(self)->list:
-        return self.__stock.high[self.__during_star:self.__during_end]
-    #獲得低點
-    def low(self)->list:
-        return self.__stock.low[self.__during_star:self.__during_end]
-    #獲得成交
-    def price(self)->list:
-        return self.__stock.price[self.__during_star:self.__during_end]
-    #獲得開盤
-    def open(self)->list:
-        return self.__stock.open[self.__during_star:self.__during_end]
-    #獲得收盤
-    def close(self)->list:
-        return self.__stock.close[self.__during_star:self.__during_end]
+    def get_id(self):
+        return self.stock.sid
 
-    #獲得振幅%
-    # 振幅=((高點-低點)/低點)*100 ,再以振幅四捨五入小數第3位數
-    def amplitude(self)->list:
-        all_amplitude=[]
-        for i in range(len(get_stock_ed.high(self))):
-            amplitude= round(((get_stock_ed.high(self)[i]-get_stock_ed.low(self)[i])/get_stock_ed.low(self)[i])*100,3)
-            all_amplitude.append(amplitude)
-        return all_amplitude
-    
-    def InputData(self):
-        sheet.range("F2").value =get_stock_ed.change(self)
-        sheet.range("G2").value =get_stock_ed.amplitude(self)
+    def get_date(self):
+        return self.stock.date[-1]
 
-   
-class get_stock_ing():
-    def __init__(self,code,row) -> None:
-        self.__code=code
-        self.__row=row
-    #------------------------------
+    def get_change(self):
+        return self.stock.change[-1]
+
+    def get_high(self):
+        return self.stock.high[-1]
+
+    def get_low(self):
+        return self.stock.low[-1]
+
+    def get_price(self):
+        return self.stock.price[-1]
+
+    def get_open(self):
+        return self.stock.open[-1]
+
+    def get_close(self):
+        return self.stock.close[-1]
+
+    def get_amplitude(self):
+        high = self.get_high()
+        low = self.get_low()
+        return round(((float(high) - float(low)) / float(low)) * 100, 2)
+
+    def input_data(self, sheet, row):
+        data = [
+            self.code,
+            self.get_change(),
+            self.get_amplitude()
+        ]
+        range_address = f"F{row}:G{row}"
+        sheet.range(range_address).value = data
+
+class RealtimeStockData:
+    def __init__(self, code, row):
+        self.code = code
+        self.row = row
     #       獲取盤中資料
     def get_all_information(self):
-        return self.__code
-    
+        return self.code
     #獲得info裡面個別資料
     def get_info(self):
-        return self.__code["info"]
+        return self.code["info"]
     #獲得時間
+    #回傳格式  ('2023-06-14', '14:30:00')
     def get_time(self):
-        time=self.__code["info"]["time"]
-        time=time.split(" ")
-        #回傳格式  ('2023-06-14', '14:30:00')
-        return time[0],time[1]
-    #獲得代號
+        time = self.get_info()["time"].split(" ")
+        return time[0], time[1]
+     #獲得代號
     def get_code(self):
-        return self.__code["info"]["code"]
+        return self.get_info()["code"]
     #獲得名稱
     def get_name(self):
-        return self.__code["info"]["name"]
-    
+        return self.get_info()["name"]
     #獲得realtime裡面個別資料
     def get_realtime(self):
-        return self.__code["realtime"]
-   
+        return self.code["realtime"]
     #成交價
     def get_latest_trade_price(self):
-        return self.__code["realtime"]["latest_trade_price"]
+        return self.get_realtime()["latest_trade_price"]
     #成交量
     def get_trade_volume(self):
-        return self.__code["realtime"]["trade_volume"]
-    
+        return self.get_realtime()["trade_volume"]
     #總成交量
     def get_accumulate_trade_volume(self):
-        return self.__code["realtime"]["accumulate_trade_volume"]
-    
+        return self.get_realtime()["accumulate_trade_volume"]
     #買進價格
     def get_best_bid_price(self):
-        return self.__code["realtime"]["best_bid_price"][-1]
+        return self.get_realtime()["best_bid_price"][-1]
     #買進數量
     def get_best_bid_volume(self):
-        return self.__code["realtime"]["best_bid_volume"][-1]
+        return self.get_realtime()["best_bid_volume"][-1]
     #賣出價格
     def get_best_ask_price(self):
-        return self.__code["realtime"]["best_ask_price"][-1]
+        return self.get_realtime()["best_ask_price"][-1]
     #賣出數量
     def get_best_ask_volume(self):
-        return self.__code["realtime"]["best_ask_volume"][-1]
-    
+        return self.get_realtime()["best_ask_volume"][-1]
     #開盤
     def get_open(self):
-        return self.__code["realtime"]["open"]
+        return self.get_realtime()["open"]
     #高點
     def get_high(self):
-        return self.__code["realtime"]["high"]
+        return self.get_realtime()["high"]
     #低點
     def get_low(self):
-        return self.__code["realtime"]["low"]
-    
+        return self.get_realtime()["low"]
     #振幅
     def get_amplitude(self):
-        return round(((float(get_stock_ing.get_high(self))-float(get_stock_ing.get_low(self)))/float(get_stock_ing.get_low(self)))*100,3)
-    
-    
+        high = self.get_high()
+        low = self.get_low()
+        return round(((float(high) - float(low)) / float(low)) * 100, 2)
+
     #填入資料
-    def input_data(self):
+    def input_data(self, sheet):
         # 修改数据
-        sheet.range(f"B{self.__row}").value = get_stock_ing.get_name(self)
-        sheet.range(f"C{self.__row}").value = get_stock_ing.get_best_bid_price(self)
-        sheet.range(f"D{self.__row}").value = get_stock_ing.get_best_ask_price(self)
-        sheet.range(f"E{self.__row}").value = get_stock_ing.get_latest_trade_price(self)
-        sheet.range(f"F{self.__row}").value ="-"
-        sheet.range(f"G{self.__row}").value ="-"
-        sheet.range(f"H{self.__row}").value =get_stock_ing.get_trade_volume(self)
-        sheet.range(f"I{self.__row}").value =get_stock_ing.get_best_bid_volume(self)
-        sheet.range(f"J{self.__row}").value =get_stock_ing.get_best_ask_volume(self)
-        sheet.range(f"K{self.__row}").value =get_stock_ing.get_accumulate_trade_volume(self)
-        sheet.range(f"L{self.__row}").value =get_stock_ing.get_high(self)
-        sheet.range(f"M{self.__row}").value =get_stock_ing.get_low(self)
-        sheet.range(f"N{self.__row}").value =get_stock_ing.get_open(self)
+        data = [
+            self.get_name(),
+            self.get_best_bid_price(),
+            self.get_best_ask_price(),
+            self.get_latest_trade_price(),
+            "-",
+            "-",
+            self.get_trade_volume(),
+            self.get_best_bid_volume(),
+            self.get_best_ask_volume(),
+            self.get_accumulate_trade_volume(),
+            self.get_high(),
+            self.get_low(),
+            self.get_open()
+        ]
+        #設置b到n
+        range_address = f"B{self.row}:N{self.row}"
+        #從設置的填入資料
+        sheet.range(range_address).value = data
         #自動調整名稱寬度
         sheet.range("B:B").autofit()
-
-        
         # 保存修改
-        workbook.save()
-#--------------------------------------------------------------------        
-        
+        sheet.book.save()
 
-#資料內容 ->文字型態    
-def ing(data_list:list):
-    stock_data = twstock.realtime.get(data_list)
+#已fun的方式來使用realtime.get
+def get_stock_data(stock_codes):
+    stock_data = twstock.realtime.get(stock_codes)
+    return stock_data
+#盤中抓即時資料
+def update_realtime_data(codes,sheet):
+    stock_data = get_stock_data(codes)
+    row = 2
+    for stock_code, data in stock_data.items():
+        if stock_code == "success":
+            break
+
+        stock = RealtimeStockData(data, row)
+        stock.input_data(sheet)
+        row += 1
+#收盤時抓
+def update_endofday_data(codes,sheet):
     row=2
-    for stock_code in stock_data:
-        #最後一個會是succcess,所以在最後一個前停下來
-        if "success" == stock_code:
+    for stock_code in codes:
+        if stock_code == "success":
             break
-
-        stock=get_stock_ing(stock_data[stock_code],row)
-        row+=1
-        #呼叫填入資料
-        stock.input_data()
-        #print(stock.get_realtime())
-    
-#資料內容 ->文字型態    
-def ed(data_list:list):
-    
-    for stock_code in data_list:
-        #最後一個會是succcess,所以在最後一個前停下來
-        if "success" == stock_code:
-            break
-        stock=get_stock_ed(stock_code)
-        stock.InputData()
-        #列印出資料
-        #print(stock.price())
-        
-        #可15秒可以用
+        stock = StockData(stock_code)
+        stock.input_data(sheet,row)
+        row += 1
         time.sleep(15)
-
-
 
 def main():
     try:
@@ -187,12 +169,9 @@ def main():
         workbook = app.books.open("data.xlsx")
     
     sheet = workbook.sheets.active
-
-    return workbook,sheet
+    return workbook, sheet
 
 if __name__ == "__main__":
-    workbook,sheet = main()
-    ing(["0050","0052"])
-
-    #ed(["0050"])
-    
+    workbook, sheet = main()
+    update_realtime_data(["0050","0052"],sheet)
+    update_endofday_data(["0050","0052"],sheet)
