@@ -13,9 +13,9 @@ data_list = df.iloc[:, 0].astype(str).tolist()
 # 打印列表
 print(data_list)
 
-
+workbook,sheet = get_stock.main()
 #get_stock.ed(data_list)
-#get_stock.get_list(data_list)
+get_stock.ing(data_list)
 
 
 '''

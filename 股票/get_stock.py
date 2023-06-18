@@ -55,8 +55,9 @@ class get_stock_ed():
 
    
 class get_stock_ing():
-    def __init__(self,code) -> None:
+    def __init__(self,code,row) -> None:
         self.__code=code
+        self.__row=row
     #------------------------------
     #       獲取盤中資料
     def get_all_information(self):
@@ -124,19 +125,19 @@ class get_stock_ing():
     #填入資料
     def input_data(self):
         # 修改数据
-        sheet.range("B2").value = get_stock_ing.get_name(self)
-        sheet.range("C2").value = get_stock_ing.get_best_bid_price(self)
-        sheet.range("D2").value = get_stock_ing.get_best_ask_price(self)
-        sheet.range("E2").value = get_stock_ing.get_latest_trade_price(self)
-        sheet.range("F2").value ="-"
-        sheet.range("G2").value ="-"
-        sheet.range("H2").value =get_stock_ing.get_trade_volume(self)
-        sheet.range("I2").value =get_stock_ing.get_best_bid_volume(self)
-        sheet.range("J2").value =get_stock_ing.get_best_ask_volume(self)
-        sheet.range("K2").value =get_stock_ing.get_accumulate_trade_volume(self)
-        sheet.range("L2").value =get_stock_ing.get_high(self)
-        sheet.range("M2").value =get_stock_ing.get_low(self)
-        sheet.range("N2").value =get_stock_ing.get_open(self)
+        sheet.range(f"B{self.__row}").value = get_stock_ing.get_name(self)
+        sheet.range(f"C{self.__row}").value = get_stock_ing.get_best_bid_price(self)
+        sheet.range(f"D{self.__row}").value = get_stock_ing.get_best_ask_price(self)
+        sheet.range(f"E{self.__row}").value = get_stock_ing.get_latest_trade_price(self)
+        sheet.range(f"F{self.__row}").value ="-"
+        sheet.range(f"G{self.__row}").value ="-"
+        sheet.range(f"H{self.__row}").value =get_stock_ing.get_trade_volume(self)
+        sheet.range(f"I{self.__row}").value =get_stock_ing.get_best_bid_volume(self)
+        sheet.range(f"J{self.__row}").value =get_stock_ing.get_best_ask_volume(self)
+        sheet.range(f"K{self.__row}").value =get_stock_ing.get_accumulate_trade_volume(self)
+        sheet.range(f"L{self.__row}").value =get_stock_ing.get_high(self)
+        sheet.range(f"M{self.__row}").value =get_stock_ing.get_low(self)
+        sheet.range(f"N{self.__row}").value =get_stock_ing.get_open(self)
         #自動調整名稱寬度
         sheet.range("B:B").autofit()
 
@@ -149,16 +150,17 @@ class get_stock_ing():
 #資料內容 ->文字型態    
 def ing(data_list:list):
     stock_data = twstock.realtime.get(data_list)
-
+    row=2
     for stock_code in stock_data:
         #最後一個會是succcess,所以在最後一個前停下來
         if "success" == stock_code:
             break
 
-        stock=get_stock_ing(stock_data[stock_code])
+        stock=get_stock_ing(stock_data[stock_code],row)
+        row+=1
         #呼叫填入資料
         stock.input_data()
-        print(stock.get_realtime())
+        #print(stock.get_realtime())
     
 #資料內容 ->文字型態    
 def ed(data_list:list):
@@ -171,28 +173,26 @@ def ed(data_list:list):
         stock.InputData()
         #列印出資料
         #print(stock.price())
+        
         #可15秒可以用
         time.sleep(15)
 
 
 
-
-if __name__ == "__main__":
-    #判斷有沒有開著exl
+def main():
     try:
-        workbook=xw.Book("88.xlsx")
+        workbook = xw.Book("data.xlsx")
     except:
-         # 连接到已打开的Excel应用程序
-        app = xw.App(visible=True,add_book=False)
-        # 获取活动工作簿
-        workbook = app.books.open("88.xlsx")
+        app = xw.App(visible=True, add_book=False)
+        workbook = app.books.open("data.xlsx")
     
-    # 获取活动工作表
     sheet = workbook.sheets.active
 
+    return workbook,sheet
 
+if __name__ == "__main__":
+    workbook,sheet = main()
+    ing(["0050","0052"])
 
-
-    #ing(["0050"])
-    ed(["0050"])
+    #ed(["0050"])
     
