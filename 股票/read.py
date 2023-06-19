@@ -1,6 +1,10 @@
 import pandas as pd
 import get_stock
-import time
+from datetime import datetime,time
+import time as t
+
+
+
 
 
 
@@ -13,23 +17,33 @@ data_list = df.iloc[:, 0].astype(str).tolist()
 # 打印列表
 print(data_list)
 
-workbook,sheet = get_stock.main()
-#get_stock.ed(data_list)
-get_stock.ing(data_list)
+# 取得現在的時間
+now = datetime.now().time()
+# 設定下午1點半的時間
+closing_time = time(13, 30)
+file="data.xlsx"
+workbook,sheet = get_stock.main(file)
+#get_stock.update_realtime_data(data_list,sheet)
+#get_stock.update_endofday_data(data_list,sheet)
 
 
-'''
-測試5秒會不會被封 答案是不會
-count=0
-while 1:
+error_count = 0  # 错误计数器
+#測試5秒會不會被封 答案是不會
+while now < closing_time:
     try:
-        count+=1
-        get_stock.get_list(data_list)
-        print(f'------第{count}次,完后5秒--------')
-        time.sleep(5)
+        get_stock.update_realtime_data(data_list,sheet)
+        t.sleep(5)
+        now = datetime.now().time()
     except:
-        break
-'''
+        error_count += 1  # 错误计数器加一
+        if error_count >= 2:
+            exit()  # 达到错误次数上限，关闭程序
+        workbook,sheet = get_stock.main(file)
+            
+        
+if now > closing_time:
+    get_stock.update_endofday_data(data_list,sheet)   
+
 
 
 

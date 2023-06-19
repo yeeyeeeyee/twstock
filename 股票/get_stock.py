@@ -41,7 +41,6 @@ class StockData:
 
     def input_data(self, sheet, row):
         data = [
-            self.code,
             self.get_change(),
             self.get_amplitude()
         ]
@@ -144,8 +143,10 @@ def update_realtime_data(codes,sheet):
     stock_data = get_stock_data(codes)
     row = 2
     for stock_code, data in stock_data.items():
-        if stock_code == "success":
+        if stock_code == "success" or data["success"] =="False":
             break
+        #確認列表中有抓不到的資料
+        #print(f"stock_code:{stock_code}---data:{data['success']}")
 
         stock = RealtimeStockData(data, row)
         stock.input_data(sheet)
@@ -161,17 +162,17 @@ def update_endofday_data(codes,sheet):
         row += 1
         time.sleep(15)
 
-def main():
+def main(file):
     try:
-        workbook = xw.Book("data.xlsx")
+        workbook = xw.Book(file)
     except:
         app = xw.App(visible=True, add_book=False)
-        workbook = app.books.open("data.xlsx")
+        workbook = app.books.open(file)
     
     sheet = workbook.sheets.active
     return workbook, sheet
 
 if __name__ == "__main__":
-    workbook, sheet = main()
+    workbook, sheet = main("data.xlsx")
     update_realtime_data(["0050","0052"],sheet)
     update_endofday_data(["0050","0052"],sheet)
