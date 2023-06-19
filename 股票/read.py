@@ -24,6 +24,7 @@ now = datetime.now().time()
 closing_time = time(13, 40)
 file="data.xlsx"
 workbook,sheet = get_stock.main(file)
+
 #get_stock.update_realtime_data(data_list,sheet)
 #get_stock.update_endofday_data(data_list,sheet)
 
