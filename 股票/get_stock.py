@@ -173,7 +173,7 @@ def ed(data_list:list):
         #print(stock.price())
         #可15秒可以用
         time.sleep(15)
-
+ 
 
 
 
