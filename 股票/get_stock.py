@@ -143,7 +143,7 @@ def update_realtime_data(codes,sheet):
     stock_data = get_stock_data(codes)
     row = 2
     for stock_code, data in stock_data.items():
-        if stock_code == "success" or data["success"] =="False":
+        if stock_code == "success" :
             break
         #確認列表中有抓不到的資料
         #print(f"stock_code:{stock_code}---data:{data['success']}")
@@ -157,10 +157,14 @@ def update_endofday_data(codes,sheet):
     for stock_code in codes:
         if stock_code == "success":
             break
-        stock = StockData(stock_code)
-        stock.input_data(sheet,row)
-        row += 1
-        time.sleep(15)
+        #如果有錯就下一個
+        try:
+            stock = StockData(stock_code)
+            stock.input_data(sheet,row)
+            row += 1
+            time.sleep(15)
+        except:
+            continue
 
 def main(file):
     try:
