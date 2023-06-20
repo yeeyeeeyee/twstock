@@ -131,8 +131,7 @@ class RealtimeStockData:
         sheet.range(range_address).value = data
         #自動調整名稱寬度
         sheet.range("B:B").autofit()
-        # 保存修改
-        sheet.book.save()
+        
 
 #已fun的方式來使用realtime.get
 def get_stock_data(stock_codes):
@@ -151,6 +150,8 @@ def update_realtime_data(codes,sheet):
         stock = RealtimeStockData(data, row)
         stock.input_data(sheet)
         row += 1
+    # 保存修改
+    sheet.book.save()
 #收盤時抓
 def update_endofday_data(codes,sheet):
     row=2
@@ -166,14 +167,16 @@ def update_endofday_data(codes,sheet):
         except:
             continue
 
-def main(file):
+def main(file,sheet_name:str=""):
     try:
         workbook = xw.Book(file)
     except:
         app = xw.App(visible=True, add_book=False)
         workbook = app.books.open(file)
-    
-    sheet = workbook.sheets.active
+    if sheet_name == "":
+        sheet = workbook.sheets.active
+    else:
+        sheet = workbook.sheets[sheet_name]
     return workbook, sheet
 
 if __name__ == "__main__":

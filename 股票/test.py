@@ -3,7 +3,9 @@ import twstock
 #測試有沒有被擋住
 print (twstock.realtime.get('00850'))
 
-""" #測試歷史資料的日期
+""" 
+#測試歷史資料的日期
 stock=twstock.Stock('0050')
-print(stock.sid) """
+print(stock.date[-1])
 
+ """
