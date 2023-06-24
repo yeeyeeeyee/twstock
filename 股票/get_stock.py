@@ -61,7 +61,8 @@ class RealtimeStockData:
     #回傳格式  ('2023-06-14', '14:30:00')
     def get_time(self):
         time = self.get_info()["time"].split(" ")
-        return time[0], time[1]
+        print(time[0])
+        return time[0]
      #獲得代號
     def get_code(self):
         return self.get_info()["code"]
@@ -110,6 +111,8 @@ class RealtimeStockData:
     #填入資料
     def input_data(self, sheet):
         # 修改数据
+        sheet.range(f"A{self.row}").api.NumberFormat = "yyyy/mm/dd" 
+        sheet.range(f"A{self.row}").value = self.get_time()
         data = [
             self.get_name(),
             self.get_best_bid_price(),
@@ -125,14 +128,13 @@ class RealtimeStockData:
             self.get_low(),
             self.get_open()
         ]
-        #設置b到n
-        range_address = f"B{self.row}:N{self.row}"
+        #設置c到o
+        range_address = f"C{self.row}:O{self.row}"
         #從設置的填入資料
         sheet.range(range_address).value = data
         #自動調整名稱寬度
-        sheet.range("B:B").autofit()
-        # 保存修改
-        sheet.book.save()
+        sheet.autofit()
+        
 
 #已fun的方式來使用realtime.get
 def get_stock_data(stock_codes):
@@ -143,7 +145,7 @@ def update_realtime_data(codes,sheet):
     stock_data = get_stock_data(codes)
     row = 2
     for stock_code, data in stock_data.items():
-        if stock_code == "success" or data["success"] =="False":
+        if stock_code == "success" :
             break
         #確認列表中有抓不到的資料
         #print(f"stock_code:{stock_code}---data:{data['success']}")
@@ -151,28 +153,36 @@ def update_realtime_data(codes,sheet):
         stock = RealtimeStockData(data, row)
         stock.input_data(sheet)
         row += 1
+    # 保存修改
+    sheet.book.save()
 #收盤時抓
 def update_endofday_data(codes,sheet):
     row=2
     for stock_code in codes:
         if stock_code == "success":
             break
-        stock = StockData(stock_code)
-        stock.input_data(sheet,row)
-        row += 1
-        time.sleep(15)
+        #如果有錯就下一個
+        try:
+            stock = StockData(stock_code)
+            stock.input_data(sheet,row)
+            row += 1
+            time.sleep(15)
+        except:
+            continue
 
-def main(file):
+def main(file,sheet_name:str=""):
     try:
         workbook = xw.Book(file)
     except:
         app = xw.App(visible=True, add_book=False)
         workbook = app.books.open(file)
-    
-    sheet = workbook.sheets.active
+    if sheet_name == "":
+        sheet = workbook.sheets.active
+    else:
+        sheet = workbook.sheets[sheet_name]
     return workbook, sheet
 
 if __name__ == "__main__":
     workbook, sheet = main("data.xlsx")
     update_realtime_data(["0050","0052"],sheet)
-    update_endofday_data(["0050","0052"],sheet)
+    
