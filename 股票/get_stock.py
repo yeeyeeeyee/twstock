@@ -61,7 +61,8 @@ class RealtimeStockData:
     #回傳格式  ('2023-06-14', '14:30:00')
     def get_time(self):
         time = self.get_info()["time"].split(" ")
-        return time[0], time[1]
+        print(time[0])
+        return time[0]
      #獲得代號
     def get_code(self):
         return self.get_info()["code"]
@@ -110,6 +111,8 @@ class RealtimeStockData:
     #填入資料
     def input_data(self, sheet):
         # 修改数据
+        sheet.range(f"A{self.row}").api.NumberFormat = "yyyy/mm/dd" 
+        sheet.range(f"A{self.row}").value = self.get_time()
         data = [
             self.get_name(),
             self.get_best_bid_price(),
@@ -125,12 +128,12 @@ class RealtimeStockData:
             self.get_low(),
             self.get_open()
         ]
-        #設置b到n
-        range_address = f"B{self.row}:N{self.row}"
+        #設置c到o
+        range_address = f"C{self.row}:O{self.row}"
         #從設置的填入資料
         sheet.range(range_address).value = data
         #自動調整名稱寬度
-        sheet.range("B:B").autofit()
+        sheet.autofit()
         
 
 #已fun的方式來使用realtime.get
@@ -182,4 +185,4 @@ def main(file,sheet_name:str=""):
 if __name__ == "__main__":
     workbook, sheet = main("data.xlsx")
     update_realtime_data(["0050","0052"],sheet)
-    update_endofday_data(["0050","0052"],sheet)
+    
