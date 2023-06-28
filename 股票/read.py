@@ -3,8 +3,7 @@ import get_stock
 from datetime import datetime,time
 import time as t
 import requests
-
-
+import stock_end
 
 
  
@@ -45,14 +44,15 @@ while now < closing_time:
         if error_count >= 2:
             exit()  # 达到错误次数上限，关闭程序
         workbook,sheet = get_stock.main(file,sheet_name)
-    
+
+""" 
 #1:50分才有漲幅資料
 print("暫停中") 
 t.sleep(900)           
         
 if now > closing_time:
-    get_stock.update_endofday_data(data_list,sheet)   
-
+    stock_end.update_endofday_data(data_list,sheet)   
+ """
 
 
 
