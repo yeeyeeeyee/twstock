@@ -7,8 +7,34 @@ import xlwings as xw
 
 #=============================================================
 class end:
-    def __init__(self,code):
+    def __init__(self,code,row):
         self.code=code
+        self.row=row
+        self.昨收 = "-"
+        self.市盈率 = "-"
+        self.市淨率 = "-"
+        self.ROE = "-"
+        self.資產報酬率 = "-"
+        self.毛利率 = "-"
+        self.營益率 = "-"
+        self.稅後淨利率 = "-"
+        self.每股淨值 = "-"
+        self.盈餘 = "-"
+        self.流動比率 = "-"
+        self.速動比率 = "-"
+        self.負債比率 = "-"
+        self.利息保障倍數 = "-"
+        self.應收帳款收現天數 = "-"
+        self.存貨週轉天數 = "-"
+        self.現金股利 = "-"
+        self.股票股利 = "-"
+        self.殖利率 = "-"
+        self.除息日 = "-"
+        self.股息發放日 = "-"
+        self.除權日 = "-"
+        self.盈餘再投資比 = "-"
+        self.管理費 = "-"
+            
     #判斷
     def judge(self):
         url = f"https://tw.stock.yahoo.com/quote/{self.code}.TW"
@@ -34,26 +60,26 @@ class end:
         elements =soup.find_all("div",class_="table-grid row-fit-half", attrs={"style": True})
         #個股
         if len(elements)==4:
-            self.PE()
-            self.PB()
+            self.get_PE()
+            self.get_PB()
             self.杜邦分析()
             self.NAVPS(soup)
             self.三率()
             self.流速動比率()
             self.負債比()
-            self.利息保障倍數()
-            self.盈餘再投資比()
+            self.get_利息保障倍數()
+            self.get_盈餘再投資比()
 
 
-            self.HighsAndLows(yahoo)
-            self.現金股利發放日_person(soup)
+            self.yesterday_close(yahoo)
+            self.股息發放日_person(soup)
             self.財務報表()
         #ETF
         else:
             self.ManagementFee(elements)
-            self.現金股利發放日_ETF(soup)
+            self.股息發放日_ETF(soup)
             self.財務報表()
-            self.HighsAndLows(yahoo)
+            self.yesterday_close(yahoo)
 
         #---------------------------------------
         
@@ -63,13 +89,14 @@ class end:
         
 
     #漲跌
-    def HighsAndLows(self,soup):
+    def yesterday_close(self,soup):
         #獲取成交,開盤  等等資料
         ul=soup.find("ul",class_="D(f) Fld(c) Flw(w) H(192px) Mx(-16px)")
         #變成字典
         dictionary = {key.text: value.text for key, value in ul}
         #print(dictionary)
         #獲取字典裡的"昨收"
+        self.昨收=dictionary['昨收']
         print(f"昨收:{dictionary['昨收']}")
         
 
@@ -83,40 +110,45 @@ class end:
         #所有資料
         pairs = [(element.text, v.text) for element, v in desired_elements]
         #選擇 管理費的值
+        self.管理費=pairs[-1][1]
         print(f"管理費:{pairs[-1][1]}")
         
         
 
-    def 現金股利發放日_ETF(self,soup):
+    def 股息發放日_ETF(self,soup):
         elements =soup.find_all("div",class_="table-grid Mb(20px) row-fit-half")
 
         second_element=elements[0]
         desired_elements=second_element.find_all("div",class_="Py(8px) Pstart(12px) Bxz(bb)")
-        print(f'現金股利發放日:{desired_elements[-1].text}')
+        self.股息發放日=desired_elements[-1].text
+        print(f'股息發放日:{desired_elements[-1].text}')
     
         
     #-------------------------------------------------------------------------------------------
-    def 現金股利發放日_person(self,soup):
+    def 股息發放日_person(self,soup):
         desired_elements=soup.find_all("div",class_="D(f) Ai(fs) H(100%) Fz(16px) Bxz(bb) Bdbw(1px) Bdbs(s) Bdc($bd-primary-divider) Lh(1.5)")
         dictionary = {key.text: value.text for key, value in desired_elements}
+        self.股息發放日=dictionary['現金股利發放日']
         print(f'現金股利發放日:{dictionary["現金股利發放日"]}')   
         
 
     #市盈率(PE)
-    def PE(self):
+    def get_PE(self):
         url = f"https://histock.tw/stock/{self.code}/%E6%9C%AC%E7%9B%8A%E6%AF%94"
         response = requests.get(url)
         soup = BeautifulSoup(response.text, "html.parser")
         span_elements = soup.find("td", attrs={"style": True})
+        self.市盈率=span_elements.text
         print(f"市盈率:{span_elements.text}")
         
 
     #市淨率
-    def PB(self):
+    def get_PB(self):
         url = f"https://histock.tw/stock/{self.code}/%E8%82%A1%E5%83%B9%E6%B7%A8%E5%80%BC%E6%AF%94"
         response = requests.get(url)
         soup = BeautifulSoup(response.text, "html.parser")
         span_elements = soup.find("td", attrs={"style": True})
+        self.市淨率=span_elements.text
         print(f"市淨率:{span_elements.text}")
         
 
@@ -127,16 +159,22 @@ class end:
 
         elements = soup.find_all("td")
         #除權日
+        self.除權日=elements[2].text
         print(f'除權日:{elements[2].text}')
         #除息日
+        self.除息日=f'{elements[1].text}/{elements[3].text}'
         print(f'除息日:{elements[1].text}/{elements[3].text}')
         #股票股利
+        self.股票股利=elements[5].text
         print(f'股票股利:{elements[5].text}')
         #現金股利
+        self.現金股利=elements[6].text
         print(f'現金股利:{elements[6].text}')
         #EPS(盈餘)
+        self.盈餘=elements[7].text
         print(f'EPS:{elements[7].text}')
         #現金殖利率(殖利率)
+        self.殖利率=elements[9].text
         print(f'現金殖利率:{elements[9].text}')
         
 
@@ -147,9 +185,9 @@ class end:
 
         elements = soup.find_all("td")
         #ROE
+        self.ROE=elements[1].text
         print(f"ROE:{elements[1].text}")
-        #稅後淨利率
-        print(f"稅後淨利率:{elements[2].text}")
+        
         
 
     #每股淨值
@@ -158,6 +196,7 @@ class end:
         div=elements.find_all("div",class_="D(f) Ai(fs) H(100%) Fz(16px) Bxz(bb) Bdbw(1px) Bdbs(s) Bdc($bd-primary-divider) Lh(1.5)")
 
         dictionary = {key.text: value.text for key, value in div}
+        self.每股淨值=dictionary['每股淨值']
         print(f'每股淨值:{dictionary["每股淨值"]}')
         
 
@@ -168,10 +207,13 @@ class end:
 
         elements = soup.find_all("td")
         #毛利率
+        self.毛利率=elements[1].text
         print(f"毛利率:{elements[1].text}")
         #營益率
+        self.營益率=elements[2].text
         print(f"營益率:{elements[2].text}")
-        #淨利率
+        #稅後淨利率
+        self.稅後淨利率=elements[4].text
         print(f"淨利率:{elements[4].text}")
         
 
@@ -182,8 +224,10 @@ class end:
 
         elements = soup.find_all("td")
         #流動比
+        self.流動比率=elements[1].text
         print(f"流動比:{elements[1].text}")
         #速動比
+        self.速動比率=elements[2].text
         print(f"速動比:{elements[2].text}")
         
 
@@ -194,16 +238,18 @@ class end:
 
         elements = soup.find_all("td")
         #負債比
+        self.負債比率=elements[1].text
         print(f"負債比:{elements[1].text}")
         
 
-    def 利息保障倍數(self):
+    def get_利息保障倍數(self):
         url = f"https://histock.tw/stock/{self.code}/%E5%88%A9%E6%81%AF%E4%BF%9D%E9%9A%9C%E5%80%8D%E6%95%B8"
         response = requests.get(url)
         soup = BeautifulSoup(response.text, "html.parser")
 
         elements = soup.find_all("td")
         #利息保障倍數
+        self.利息保障倍數=elements[1].text
         print(f"利息保障倍數:{elements[1].text}")
         
 
@@ -214,19 +260,101 @@ class end:
 
         elements = soup.find_all("td")
         #應收帳款收現天數
+        self.應收帳款收現天數=elements[1].text
         print(f"應收帳款收現天數:{elements[1].text}")
         #存貨週轉天數
+        self.存貨週轉天數=elements[2].text
         print(f"存貨週轉天數:{elements[2].text}")
         
 
-    def 盈餘再投資比(self):
+    def get_盈餘再投資比(self):
         url = f"https://histock.tw/stock/{self.code}/%E7%9B%88%E9%A4%98%E5%86%8D%E6%8A%95%E8%B3%87%E6%AF%94%E7%8E%87"
         response = requests.get(url)
         soup = BeautifulSoup(response.text, "html.parser")
 
         elements = soup.find_all("td")
         #盈餘再投資比
+        self.盈餘再投資比=elements[1].text
         print(f"盈餘再投資比:{elements[1].text}")
+
+    def input_data(self,sheet):
+        url = f"https://tw.stock.yahoo.com/quote/{self.code}.TW"
+        response = requests.get(url)
+        yahoo = BeautifulSoup(response.text, "html.parser")
+        span_elements = yahoo.find_all("title")
+
+        
+        #如果tw找不到就換TWO
+        if span_elements == []:
+            url = f"https://tw.stock.yahoo.com/quote/{self.code}.TWO"
+            response = requests.get(url)
+            yahoo = BeautifulSoup(response.text, "html.parser")
+            span_elements = yahoo.find_all("title")
+        
+
+        #判斷是否為個股
+        url += "/profile"
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        #yahoo重要行事曆
+        elements =soup.find_all("div",class_="table-grid row-fit-half", attrs={"style": True})
+        #個股
+        if len(elements)==4:
+            self.get_PE()
+            self.get_PB()
+            self.杜邦分析()
+            self.NAVPS(soup)
+            self.三率()
+            self.流速動比率()
+            self.負債比()
+            self.get_利息保障倍數()
+            self.get_盈餘再投資比()
+
+
+            self.yesterday_close(yahoo)
+            self.股息發放日_person(soup)
+            self.財務報表()
+        #ETF
+        else:
+            self.ManagementFee(elements)
+            self.股息發放日_ETF(soup)
+            self.財務報表()
+            self.yesterday_close(yahoo)
+
+            
+        data=[
+            self.昨收 ,
+            self.市盈率 ,
+            self.市淨率,
+            self.ROE ,
+            self.資產報酬率 ,
+            self.毛利率 ,
+            self.營益率 ,
+            self.稅後淨利率 ,
+            self.每股淨值 ,
+            self.盈餘 ,
+            self.流動比率 ,
+            self.速動比率 ,
+            self.負債比率 ,
+            self.利息保障倍數 ,
+            self.應收帳款收現天數 ,
+            self.存貨週轉天數 ,
+            self.現金股利 ,
+            self.股票股利 ,
+            self.殖利率 ,
+            self.除息日 ,
+            self.股息發放日 ,
+            self.除權日 ,
+            self.盈餘再投資比 ,
+            self.管理費 ,
+        ]
+         #設置P到AM
+        range_address = f"P{self.row}:AM{self.row}"
+        #從設置的填入資料
+        sheet.range(range_address).value = data
+        #自動調整名稱寬度
+        sheet.autofit()
 
 
 
@@ -235,7 +363,7 @@ def update_data(codes:list,sheet):
     stock_data = codes
     row = 2
     for  data in stock_data:
-        stock = RealtimeStockData(data, row)
+        stock = end(data, row)
         stock.input_data(sheet)
         row += 1
     # 保存修改
@@ -254,6 +382,9 @@ def main(file,sheet_name:str=""):
     return workbook, sheet
 
 if __name__ == '__main__':
+  workbook, sheet = main("data.xlsx")
+  update_data(["0050","0052","2324"],sheet)
+
   """  
     # 读取Excel文件
     df = pd.read_excel('88.xlsx')
