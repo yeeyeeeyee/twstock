@@ -2,6 +2,7 @@ import twstock
 import xlwings as xw
 import requests
 from bs4 import BeautifulSoup
+import time
 
 
 class RealtimeStockData:
@@ -28,41 +29,30 @@ class RealtimeStockData:
     #獲得realtime裡面個別資料
     def get_realtime(self):
         return self.code["realtime"]
-    trade_price=""
+    
     #成交價
-    def get_latest_trade_price(self):
+    #if get_realtime()["latest_trade_price"] != "-" -> 正常資料 else ->儲存格資料
+    def get_latest_trade_price(self, sheet):
         if self.get_realtime()["latest_trade_price"] != "-":
-            RealtimeStockData.trade_price = self.get_realtime()["latest_trade_price"]
-            return self.get_realtime()["latest_trade_price"]
+            trade_price = self.get_realtime()["latest_trade_price"]
+            return trade_price
         else:
-            return RealtimeStockData.trade_price
+            trade_price = sheet.range(f"F{self.row}").value
+            return trade_price 
  
     #昨收
-    #判斷
-    def close(self):
-        url = f"https://tw.stock.yahoo.com/quote/{self.get_code()}.TW"
-        response = requests.get(url)
-        soup = BeautifulSoup(response.text, "html.parser")
-        span_elements = soup.find_all("title")
-        #如果tw找不到就換TWO
-        if span_elements == []:
-            url = f"https://tw.stock.yahoo.com/quote/{self.get_code()}.TWO"
-            response = requests.get(url)
-            soup = BeautifulSoup(response.text, "html.parser")
-            span_elements = soup.find_all("title")
-        ul=soup.find("ul",class_="D(f) Fld(c) Flw(w) H(192px) Mx(-16px)")
-        #變成字典
-        dictionary = {key.text: value.text for key, value in ul}
-        return dictionary['昨收']
+    def close(self,sheet):
+        close = sheet.range(f"P{self.row}").value
+        return close
     
     #漲跌
-    def get_amplitude(self):
-        amplitude=float(self.get_latest_trade_price())-float(RealtimeStockData.close(self))
+    def get_amplitude(self,sheet):
+        amplitude=float(self.get_latest_trade_price(sheet))-float(RealtimeStockData.close(self,sheet))
         return amplitude
     
     # 漲跌%
-    def get_amplitude_percent(self):
-        amplitude_percent=float(self.get_amplitude())/float(RealtimeStockData.close(self))*100
+    def get_amplitude_percent(self,sheet):
+        amplitude_percent = float(self.get_amplitude(sheet)) / float(RealtimeStockData.close(self,sheet)) * 100
         amplitude_percent=round(amplitude_percent,2)
         return amplitude_percent
     
@@ -104,9 +94,9 @@ class RealtimeStockData:
             self.get_name(),
             self.get_best_bid_price(),
             self.get_best_ask_price(),
-            self.get_latest_trade_price(),
-            self.get_amplitude(),
-            self.get_amplitude_percent(),
+            self.get_latest_trade_price(sheet),
+            self.get_amplitude(sheet),
+            self.get_amplitude_percent(sheet),
             self.get_trade_volume(),
             self.get_best_bid_volume(),
             self.get_best_ask_volume(),
@@ -158,5 +148,7 @@ def main(file,sheet_name:str=""):
 
 if __name__ == "__main__":
     workbook, sheet = main("data.xlsx")
-    update_realtime_data(["0050","0052"],sheet)
+    while 1:
+        update_realtime_data(["1232","2105","2308"],sheet)
+        time.sleep(3)
     

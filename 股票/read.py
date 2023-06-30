@@ -11,7 +11,7 @@ import stock_end
 df = pd.read_excel('88.xlsx')
 
 # 获取第一列数据并转换为字符串列表
-data_list = df.iloc[:, 0].astype(str).tolist()
+data_list = df.iloc[:, 1].astype(str).tolist()
 
 # 打印列表
 print(data_list)
@@ -24,13 +24,16 @@ file="data.xlsx"
 sheet_name=""
 workbook,sheet = get_stock.main(file,sheet_name)
 
+#資料
+stock_end.update_data(data_list,sheet)
 #get_stock.update_realtime_data(data_list,sheet)
-#get_stock.update_endofday_data(data_list,sheet)
 
-
+""" 
 error_count = 0  # 错误计数器
-#測試5秒會不會被封 答案是不會
+
+
 while now < closing_time:
+#while 1:
     try:
         get_stock.update_realtime_data(data_list,sheet)
         t.sleep(5)
@@ -44,15 +47,8 @@ while now < closing_time:
         if error_count >= 2:
             exit()  # 达到错误次数上限，关闭程序
         workbook,sheet = get_stock.main(file,sheet_name)
-
-""" 
-#1:50分才有漲幅資料
-print("暫停中") 
-t.sleep(900)           
-        
-if now > closing_time:
-    stock_end.update_endofday_data(data_list,sheet)   
  """
+
 
 
 

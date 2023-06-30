@@ -35,6 +35,183 @@ class end:
         self.盈餘再投資比 = "-"
         self.管理費 = "-"
             
+    
+        
+
+    #資料
+    def yesterday_close(self,soup):
+        close=soup.find("span",class_="Fw(600) Fz(16px)--mobile Fz(14px) D(f) Ai(c)")
+        self.昨收=close.text
+                
+    #管理費
+    def ManagementFee(self,soup):
+        elements =soup.find("div",class_="Py(8px) Pstart(12px) Bxz(bb) etf-management-fee")
+        self.管理費=elements.text
+        
+
+    def 股息發放日_ETF(self,soup):
+        elements =soup.find_all("div",class_="table-grid Mb(20px) row-fit-half")
+
+        second_element=elements[0]
+        desired_elements=second_element.find_all("div",class_="Py(8px) Pstart(12px) Bxz(bb)")
+        self.股息發放日=desired_elements[-1].text
+        #print(f'股息發放日:{desired_elements[-1].text}')
+    
+        
+    #-------------------------------------------------------------------------------------------
+    def 股息發放日_person(self,soup):
+        elements =soup.find_all("div",class_="table-grid Mb(20px) row-fit-half", attrs={"style": True})
+        second_element=elements[1]
+        find= second_element.find_all("div",class_="Py(8px) Pstart(12px) Bxz(bb)")
+        self.股息發放日=find[-1].text
+        
+        
+
+    #市盈率(PE)
+    def get_PE(self):
+        url = f"https://histock.tw/stock/{self.code}/%E6%9C%AC%E7%9B%8A%E6%AF%94"
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, "html.parser")
+        span_elements = soup.find("td", attrs={"style": True})
+        self.市盈率=span_elements.text
+        #print(f"市盈率:{span_elements.text}")
+        
+
+    #市淨率
+    def get_PB(self):
+        url = f"https://histock.tw/stock/{self.code}/%E8%82%A1%E5%83%B9%E6%B7%A8%E5%80%BC%E6%AF%94"
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, "html.parser")
+        span_elements = soup.find("td", attrs={"style": True})
+        self.市淨率=span_elements.text
+        #print(f"市淨率:{span_elements.text}")
+        
+
+    def 財務報表(self):
+        url = f"https://histock.tw/stock/{self.code}/%E9%99%A4%E6%AC%8A%E9%99%A4%E6%81%AF"
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        elements = soup.find_all("td")
+        #除權日
+        self.除權日=elements[2].text
+        #print(f'除權日:{elements[2].text}')
+        #除息日
+        self.除息日=f'{elements[1].text}/{elements[3].text}'
+        #print(f'除息日:{elements[1].text}/{elements[3].text}')
+        #股票股利
+        self.股票股利=elements[5].text
+        #print(f'股票股利:{elements[5].text}')
+        #現金股利
+        self.現金股利=elements[6].text
+        #print(f'現金股利:{elements[6].text}')
+        #EPS(盈餘)
+        self.盈餘=elements[7].text
+        #print(f'EPS:{elements[7].text}')
+        #現金殖利率(殖利率)
+        self.殖利率=elements[9].text
+        #print(f'現金殖利率:{elements[9].text}')
+        
+
+    def 杜邦分析(self):
+        url = f"https://histock.tw/stock/{self.code}/%E5%A0%B1%E9%85%AC%E7%8E%87"
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        elements = soup.find_all("td")
+        #ROE
+        self.ROE=elements[1].text
+        #print(f"ROE:{elements[1].text}")
+        #ROA
+        self.資產報酬率=elements[2].text
+        
+        
+
+    #每股淨值
+    def NAVPS(self,soup):
+        elements =soup.find("div",class_="table-grid Mb(20px) row-fit-half", attrs={"style": True})
+        second_element=elements.find_all("div",class_="Py(8px) Pstart(12px) Bxz(bb)")
+        self.每股淨值=second_element[-1].text
+        
+        
+
+    def 三率(self):
+        url = f"https://histock.tw/stock/{self.code}/%E5%88%A9%E6%BD%A4%E6%AF%94%E7%8E%87"
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        elements = soup.find_all("td")
+        #毛利率
+        self.毛利率=elements[1].text
+        #print(f"毛利率:{elements[1].text}")
+        #營益率
+        self.營益率=elements[2].text
+        #print(f"營益率:{elements[2].text}")
+        #稅後淨利率
+        self.稅後淨利率=elements[4].text
+        ##print(f"淨利率:{elements[4].text}")
+        
+
+    def 流速動比率(self):
+        url = f"https://histock.tw/stock/{self.code}/%E6%B5%81%E9%80%9F%E5%8B%95%E6%AF%94%E7%8E%87"
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        elements = soup.find_all("td")
+        #流動比
+        self.流動比率=elements[1].text
+        #print(f"流動比:{elements[1].text}")
+        #速動比
+        self.速動比率=elements[2].text
+        #print(f"速動比:{elements[2].text}")
+        
+
+    def 負債比(self):
+        url = f"https://histock.tw/stock/{self.code}/%E8%B2%A0%E5%82%B5%E4%BD%94%E8%B3%87%E7%94%A2%E6%AF%94"
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        elements = soup.find_all("td")
+        #負債比
+        self.負債比率=elements[1].text
+        #print(f"負債比:{elements[1].text}")
+        
+
+    def get_利息保障倍數(self):
+        url = f"https://histock.tw/stock/{self.code}/%E5%88%A9%E6%81%AF%E4%BF%9D%E9%9A%9C%E5%80%8D%E6%95%B8"
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        elements = soup.find_all("td")
+        #利息保障倍數
+        self.利息保障倍數=elements[1].text
+        #print(f"利息保障倍數:{elements[1].text}")
+        
+
+    def 營運週轉天數(self):
+        url = f"https://histock.tw/stock/{self.code}/%E7%87%9F%E9%81%8B%E9%80%B1%E8%BD%89%E5%A4%A9%E6%95%B8"
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        elements = soup.find_all("td")
+        #應收帳款收現天數
+        self.應收帳款收現天數=elements[1].text
+        #print(f"應收帳款收現天數:{elements[1].text}")
+        #存貨週轉天數
+        self.存貨週轉天數=elements[2].text
+        #print(f"存貨週轉天數:{elements[2].text}")
+        
+
+    def get_盈餘再投資比(self):
+        url = f"https://histock.tw/stock/{self.code}/%E7%9B%88%E9%A4%98%E5%86%8D%E6%8A%95%E8%B3%87%E6%AF%94%E7%8E%87"
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        elements = soup.find_all("td")
+        #盈餘再投資比
+        self.盈餘再投資比=elements[1].text
+        #print(f"盈餘再投資比:{elements[1].text}")
+
     #判斷
     def judge(self):
         url = f"https://tw.stock.yahoo.com/quote/{self.code}.TW"
@@ -67,6 +244,7 @@ class end:
             self.三率()
             self.流速動比率()
             self.負債比()
+            self.營運週轉天數()
             self.get_利息保障倍數()
             self.get_盈餘再投資比()
 
@@ -76,206 +254,16 @@ class end:
             self.財務報表()
         #ETF
         else:
-            self.ManagementFee(elements)
+            self.ManagementFee(soup)
             self.股息發放日_ETF(soup)
             self.財務報表()
             self.yesterday_close(yahoo)
 
         #---------------------------------------
         
-        print(span_elements)
-        print(url)
-        print("\n")
-        
-
-    #漲跌
-    def yesterday_close(self,soup):
-        #獲取成交,開盤  等等資料
-        ul=soup.find("ul",class_="D(f) Fld(c) Flw(w) H(192px) Mx(-16px)")
-        #變成字典
-        dictionary = {key.text: value.text for key, value in ul}
-        #print(dictionary)
-        #獲取字典裡的"昨收"
-        self.昨收=dictionary['昨收']
-        print(f"昨收:{dictionary['昨收']}")
-        
-
-        
-        
-
-    #管理費
-    def ManagementFee(self,elements):
-        second_element = elements[0]
-        desired_elements = second_element.find_all("div",class_="D(f) Ai(fs) H(100%) Fz(16px) Bxz(bb) Bdbw(1px) Bdbs(s) Bdc($bd-primary-divider) Lh(1.5)")
-        #所有資料
-        pairs = [(element.text, v.text) for element, v in desired_elements]
-        #選擇 管理費的值
-        self.管理費=pairs[-1][1]
-        print(f"管理費:{pairs[-1][1]}")
-        
-        
-
-    def 股息發放日_ETF(self,soup):
-        elements =soup.find_all("div",class_="table-grid Mb(20px) row-fit-half")
-
-        second_element=elements[0]
-        desired_elements=second_element.find_all("div",class_="Py(8px) Pstart(12px) Bxz(bb)")
-        self.股息發放日=desired_elements[-1].text
-        print(f'股息發放日:{desired_elements[-1].text}')
-    
-        
-    #-------------------------------------------------------------------------------------------
-    def 股息發放日_person(self,soup):
-        desired_elements=soup.find_all("div",class_="D(f) Ai(fs) H(100%) Fz(16px) Bxz(bb) Bdbw(1px) Bdbs(s) Bdc($bd-primary-divider) Lh(1.5)")
-        dictionary = {key.text: value.text for key, value in desired_elements}
-        self.股息發放日=dictionary['現金股利發放日']
-        print(f'現金股利發放日:{dictionary["現金股利發放日"]}')   
-        
-
-    #市盈率(PE)
-    def get_PE(self):
-        url = f"https://histock.tw/stock/{self.code}/%E6%9C%AC%E7%9B%8A%E6%AF%94"
-        response = requests.get(url)
-        soup = BeautifulSoup(response.text, "html.parser")
-        span_elements = soup.find("td", attrs={"style": True})
-        self.市盈率=span_elements.text
-        print(f"市盈率:{span_elements.text}")
-        
-
-    #市淨率
-    def get_PB(self):
-        url = f"https://histock.tw/stock/{self.code}/%E8%82%A1%E5%83%B9%E6%B7%A8%E5%80%BC%E6%AF%94"
-        response = requests.get(url)
-        soup = BeautifulSoup(response.text, "html.parser")
-        span_elements = soup.find("td", attrs={"style": True})
-        self.市淨率=span_elements.text
-        print(f"市淨率:{span_elements.text}")
-        
-
-    def 財務報表(self):
-        url = f"https://histock.tw/stock/{self.code}/%E9%99%A4%E6%AC%8A%E9%99%A4%E6%81%AF"
-        response = requests.get(url)
-        soup = BeautifulSoup(response.text, "html.parser")
-
-        elements = soup.find_all("td")
-        #除權日
-        self.除權日=elements[2].text
-        print(f'除權日:{elements[2].text}')
-        #除息日
-        self.除息日=f'{elements[1].text}/{elements[3].text}'
-        print(f'除息日:{elements[1].text}/{elements[3].text}')
-        #股票股利
-        self.股票股利=elements[5].text
-        print(f'股票股利:{elements[5].text}')
-        #現金股利
-        self.現金股利=elements[6].text
-        print(f'現金股利:{elements[6].text}')
-        #EPS(盈餘)
-        self.盈餘=elements[7].text
-        print(f'EPS:{elements[7].text}')
-        #現金殖利率(殖利率)
-        self.殖利率=elements[9].text
-        print(f'現金殖利率:{elements[9].text}')
-        
-
-    def 杜邦分析(self):
-        url = f"https://histock.tw/stock/{self.code}/%E6%9D%9C%E9%82%A6%E5%88%86%E6%9E%90"
-        response = requests.get(url)
-        soup = BeautifulSoup(response.text, "html.parser")
-
-        elements = soup.find_all("td")
-        #ROE
-        self.ROE=elements[1].text
-        print(f"ROE:{elements[1].text}")
-        
-        
-
-    #每股淨值
-    def NAVPS(self,soup):
-        elements =soup.find("div",class_="table-grid Mb(20px) row-fit-half", attrs={"style": True})
-        div=elements.find_all("div",class_="D(f) Ai(fs) H(100%) Fz(16px) Bxz(bb) Bdbw(1px) Bdbs(s) Bdc($bd-primary-divider) Lh(1.5)")
-
-        dictionary = {key.text: value.text for key, value in div}
-        self.每股淨值=dictionary['每股淨值']
-        print(f'每股淨值:{dictionary["每股淨值"]}')
-        
-
-    def 三率(self):
-        url = f"https://histock.tw/stock/{self.code}/%E5%88%A9%E6%BD%A4%E6%AF%94%E7%8E%87"
-        response = requests.get(url)
-        soup = BeautifulSoup(response.text, "html.parser")
-
-        elements = soup.find_all("td")
-        #毛利率
-        self.毛利率=elements[1].text
-        print(f"毛利率:{elements[1].text}")
-        #營益率
-        self.營益率=elements[2].text
-        print(f"營益率:{elements[2].text}")
-        #稅後淨利率
-        self.稅後淨利率=elements[4].text
-        print(f"淨利率:{elements[4].text}")
-        
-
-    def 流速動比率(self):
-        url = f"https://histock.tw/stock/{self.code}/%E6%B5%81%E9%80%9F%E5%8B%95%E6%AF%94%E7%8E%87"
-        response = requests.get(url)
-        soup = BeautifulSoup(response.text, "html.parser")
-
-        elements = soup.find_all("td")
-        #流動比
-        self.流動比率=elements[1].text
-        print(f"流動比:{elements[1].text}")
-        #速動比
-        self.速動比率=elements[2].text
-        print(f"速動比:{elements[2].text}")
-        
-
-    def 負債比(self):
-        url = f"https://histock.tw/stock/{self.code}/%E8%B2%A0%E5%82%B5%E4%BD%94%E8%B3%87%E7%94%A2%E6%AF%94"
-        response = requests.get(url)
-        soup = BeautifulSoup(response.text, "html.parser")
-
-        elements = soup.find_all("td")
-        #負債比
-        self.負債比率=elements[1].text
-        print(f"負債比:{elements[1].text}")
-        
-
-    def get_利息保障倍數(self):
-        url = f"https://histock.tw/stock/{self.code}/%E5%88%A9%E6%81%AF%E4%BF%9D%E9%9A%9C%E5%80%8D%E6%95%B8"
-        response = requests.get(url)
-        soup = BeautifulSoup(response.text, "html.parser")
-
-        elements = soup.find_all("td")
-        #利息保障倍數
-        self.利息保障倍數=elements[1].text
-        print(f"利息保障倍數:{elements[1].text}")
-        
-
-    def 營運週轉天數(self):
-        url = f"https://histock.tw/stock/{self.code}/%E7%87%9F%E9%81%8B%E9%80%B1%E8%BD%89%E5%A4%A9%E6%95%B8"
-        response = requests.get(url)
-        soup = BeautifulSoup(response.text, "html.parser")
-
-        elements = soup.find_all("td")
-        #應收帳款收現天數
-        self.應收帳款收現天數=elements[1].text
-        print(f"應收帳款收現天數:{elements[1].text}")
-        #存貨週轉天數
-        self.存貨週轉天數=elements[2].text
-        print(f"存貨週轉天數:{elements[2].text}")
-        
-
-    def get_盈餘再投資比(self):
-        url = f"https://histock.tw/stock/{self.code}/%E7%9B%88%E9%A4%98%E5%86%8D%E6%8A%95%E8%B3%87%E6%AF%94%E7%8E%87"
-        response = requests.get(url)
-        soup = BeautifulSoup(response.text, "html.parser")
-
-        elements = soup.find_all("td")
-        #盈餘再投資比
-        self.盈餘再投資比=elements[1].text
-        print(f"盈餘再投資比:{elements[1].text}")
+        #print(span_elements)
+        #print(url)
+        #print("\n")
 
     def input_data(self,sheet):
         url = f"https://tw.stock.yahoo.com/quote/{self.code}.TW"
@@ -291,7 +279,7 @@ class end:
             yahoo = BeautifulSoup(response.text, "html.parser")
             span_elements = yahoo.find_all("title")
         
-
+        print(span_elements)
         #判斷是否為個股
         url += "/profile"
         response = requests.get(url)
@@ -308,6 +296,7 @@ class end:
             self.三率()
             self.流速動比率()
             self.負債比()
+            self.營運週轉天數()
             self.get_利息保障倍數()
             self.get_盈餘再投資比()
 
@@ -317,12 +306,12 @@ class end:
             self.財務報表()
         #ETF
         else:
-            self.ManagementFee(elements)
+            self.ManagementFee(soup)
             self.股息發放日_ETF(soup)
             self.財務報表()
             self.yesterday_close(yahoo)
 
-            
+
         data=[
             self.昨收 ,
             self.市盈率 ,
@@ -383,23 +372,8 @@ def main(file,sheet_name:str=""):
 
 if __name__ == '__main__':
   workbook, sheet = main("data.xlsx")
-  update_data(["0050","0052","2324"],sheet)
+  update_data(["1232","2105","2308"],sheet)
 
-  """  
-    # 读取Excel文件
-    df = pd.read_excel('88.xlsx')
-
-    # 获取第一列数据并转换为字符串列表
-    data_list = df.iloc[:, 1].astype(str).tolist()
-
-    #測試用資料
-    #data_list = ["0050","2912","1232","0056"]
-    # 打印列表
-    print(data_list)
-    #判斷列表股票代碼資料 
-    for i in data_list:
-        code=end(i)
-        code.judge() """
     
     
 
