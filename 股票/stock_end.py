@@ -42,12 +42,13 @@ class end:
     def yesterday_close(self,soup):
         close=soup.find("span",class_="Fw(600) Fz(16px)--mobile Fz(14px) D(f) Ai(c)")
         self.昨收=close.text
+        #print(f"昨收:{close.text}")
                 
     #管理費
     def ManagementFee(self,soup):
         elements =soup.find("div",class_="Py(8px) Pstart(12px) Bxz(bb) etf-management-fee")
         self.管理費=elements.text
-        
+        #print(f"管理費:{elements.text}")
 
     def 股息發放日_ETF(self,soup):
         elements =soup.find_all("div",class_="table-grid Mb(20px) row-fit-half")
@@ -64,7 +65,7 @@ class end:
         second_element=elements[1]
         find= second_element.find_all("div",class_="Py(8px) Pstart(12px) Bxz(bb)")
         self.股息發放日=find[-1].text
-        
+        #print(f"股息發放日:{find[-1].text}")
         
 
     #市盈率(PE)
@@ -94,7 +95,8 @@ class end:
 
         elements = soup.find_all("td")
         #除權日
-        self.除權日=elements[2].text
+        if elements[2].text!="":
+            self.除權日=elements[2].text
         #print(f'除權日:{elements[2].text}')
         #除息日
         self.除息日=f'{elements[1].text}/{elements[3].text}'
@@ -132,6 +134,7 @@ class end:
         elements =soup.find("div",class_="table-grid Mb(20px) row-fit-half", attrs={"style": True})
         second_element=elements.find_all("div",class_="Py(8px) Pstart(12px) Bxz(bb)")
         self.每股淨值=second_element[-1].text
+        #print(f"淘汰股散:{second_element[-1].text}")
         
         
 
