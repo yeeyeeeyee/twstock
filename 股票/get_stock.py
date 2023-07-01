@@ -1,7 +1,5 @@
 import twstock
 import xlwings as xw
-import requests
-from bs4 import BeautifulSoup
 import time
 
 
@@ -57,8 +55,14 @@ class RealtimeStockData:
         return amplitude_percent
     
     #成交量
-    def get_trade_volume(self):
-        return self.get_realtime()["trade_volume"]
+    def get_trade_volume(self,sheet):
+        if self.get_realtime()["trade_volume"] != "-":
+            trade_price = self.get_realtime()["trade_volume"]
+            return trade_price
+        else:
+            trade_price = sheet.range(f"I{self.row}").value
+            return trade_price 
+        
     #總成交量
     def get_accumulate_trade_volume(self):
         return self.get_realtime()["accumulate_trade_volume"]
@@ -97,7 +101,7 @@ class RealtimeStockData:
             self.get_latest_trade_price(sheet),
             self.get_amplitude(sheet),
             self.get_amplitude_percent(sheet),
-            self.get_trade_volume(),
+            self.get_trade_volume(sheet),
             self.get_best_bid_volume(),
             self.get_best_ask_volume(),
             self.get_accumulate_trade_volume(),
@@ -113,7 +117,7 @@ class RealtimeStockData:
         sheet.autofit()
         
 
-#已fun的方式來使用realtime.get
+#已func的方式來使用realtime.get
 def get_stock_data(stock_codes):
     stock_data = twstock.realtime.get(stock_codes)
     return stock_data
