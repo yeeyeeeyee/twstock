@@ -8,7 +8,7 @@ import stock_end
 
  
 # 读取Excel文件
-df = pd.read_excel('88.xlsx')
+df = pd.read_excel('data.xlsx')
 
 # 获取第一列数据并转换为字符串列表
 data_list = df.iloc[:, 1].astype(str).tolist()
@@ -24,19 +24,25 @@ file="data.xlsx"
 sheet_name=""
 workbook,sheet = get_stock.main(file,sheet_name)
 
-#資料
-stock_end.update_data(data_list,sheet)
+#測試用
+
+#其他資料
+#stock_end.update_data(data_list,sheet)
+#即時資料
 #get_stock.update_realtime_data(data_list,sheet)
 
-""" 
+
 error_count = 0  # 错误计数器
+
+#資料
+stock_end.update_data(data_list,sheet)
 
 
 while now < closing_time:
 #while 1:
     try:
         get_stock.update_realtime_data(data_list,sheet)
-        t.sleep(5)
+        t.sleep(3)
         now = datetime.now().time()
     except requests.exceptions.ConnectionError as e:
         # 處理連接錯誤
@@ -47,7 +53,6 @@ while now < closing_time:
         if error_count >= 2:
             exit()  # 达到错误次数上限，关闭程序
         workbook,sheet = get_stock.main(file,sheet_name)
- """
 
 
 
