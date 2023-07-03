@@ -1,51 +1,7 @@
 import twstock
-import time
 import xlwings as xw
+import time
 
-class StockData:
-    def __init__(self, code):
-        self.code = code
-        self.stock = twstock.Stock(code)
-        
-    def get_info(self):
-        return twstock.codes[self.code]
-
-    def get_id(self):
-        return self.stock.sid
-
-    def get_date(self):
-        return self.stock.date[-1]
-
-    def get_change(self):
-        return self.stock.change[-1]
-
-    def get_high(self):
-        return self.stock.high[-1]
-
-    def get_low(self):
-        return self.stock.low[-1]
-
-    def get_price(self):
-        return self.stock.price[-1]
-
-    def get_open(self):
-        return self.stock.open[-1]
-
-    def get_close(self):
-        return self.stock.close[-1]
-
-    def get_amplitude(self):
-        high = self.get_high()
-        low = self.get_low()
-        return round(((float(high) - float(low)) / float(low)) * 100, 2)
-
-    def input_data(self, sheet, row):
-        data = [
-            self.get_change(),
-            self.get_amplitude()
-        ]
-        range_address = f"F{row}:G{row}"
-        sheet.range(range_address).value = data
 
 class RealtimeStockData:
     def __init__(self, code, row):
@@ -61,7 +17,6 @@ class RealtimeStockData:
     #回傳格式  ('2023-06-14', '14:30:00')
     def get_time(self):
         time = self.get_info()["time"].split(" ")
-        print(time[0])
         return time[0]
      #獲得代號
     def get_code(self):
@@ -72,12 +27,42 @@ class RealtimeStockData:
     #獲得realtime裡面個別資料
     def get_realtime(self):
         return self.code["realtime"]
+    
     #成交價
-    def get_latest_trade_price(self):
-        return self.get_realtime()["latest_trade_price"]
+    #if get_realtime()["latest_trade_price"] != "-" -> 正常資料 else ->儲存格資料
+    def get_latest_trade_price(self, sheet):
+        if self.get_realtime()["latest_trade_price"] != "-":
+            trade_price = self.get_realtime()["latest_trade_price"]
+            return trade_price
+        else:
+            trade_price = sheet.range(f"F{self.row}").value
+            return trade_price 
+ 
+    #昨收
+    def close(self,sheet):
+        close = sheet.range(f"P{self.row}").value
+        return close
+    
+    #漲跌
+    def get_amplitude(self,sheet):
+        amplitude=float(self.get_latest_trade_price(sheet))-float(RealtimeStockData.close(self,sheet))
+        return amplitude
+    
+    # 漲跌%
+    def get_amplitude_percent(self,sheet):
+        amplitude_percent = float(self.get_amplitude(sheet)) / float(RealtimeStockData.close(self,sheet)) * 100
+        amplitude_percent=round(amplitude_percent,2)
+        return amplitude_percent
+    
     #成交量
-    def get_trade_volume(self):
-        return self.get_realtime()["trade_volume"]
+    def get_trade_volume(self,sheet):
+        if self.get_realtime()["trade_volume"] != "-":
+            trade_price = self.get_realtime()["trade_volume"]
+            return trade_price
+        else:
+            trade_price = sheet.range(f"I{self.row}").value
+            return trade_price 
+        
     #總成交量
     def get_accumulate_trade_volume(self):
         return self.get_realtime()["accumulate_trade_volume"]
@@ -102,11 +87,7 @@ class RealtimeStockData:
     #低點
     def get_low(self):
         return self.get_realtime()["low"]
-    #振幅
-    def get_amplitude(self):
-        high = self.get_high()
-        low = self.get_low()
-        return round(((float(high) - float(low)) / float(low)) * 100, 2)
+    
 
     #填入資料
     def input_data(self, sheet):
@@ -117,10 +98,10 @@ class RealtimeStockData:
             self.get_name(),
             self.get_best_bid_price(),
             self.get_best_ask_price(),
-            self.get_latest_trade_price(),
-            "-",
-            "-",
-            self.get_trade_volume(),
+            self.get_latest_trade_price(sheet),
+            self.get_amplitude(sheet),
+            self.get_amplitude_percent(sheet),
+            self.get_trade_volume(sheet),
             self.get_best_bid_volume(),
             self.get_best_ask_volume(),
             self.get_accumulate_trade_volume(),
@@ -136,7 +117,7 @@ class RealtimeStockData:
         sheet.autofit()
         
 
-#已fun的方式來使用realtime.get
+#已func的方式來使用realtime.get
 def get_stock_data(stock_codes):
     stock_data = twstock.realtime.get(stock_codes)
     return stock_data
@@ -155,20 +136,7 @@ def update_realtime_data(codes,sheet):
         row += 1
     # 保存修改
     sheet.book.save()
-#收盤時抓
-def update_endofday_data(codes,sheet):
-    row=2
-    for stock_code in codes:
-        if stock_code == "success":
-            break
-        #如果有錯就下一個
-        try:
-            stock = StockData(stock_code)
-            stock.input_data(sheet,row)
-            row += 1
-            time.sleep(15)
-        except:
-            continue
+
 
 def main(file,sheet_name:str=""):
     try:
@@ -184,5 +152,7 @@ def main(file,sheet_name:str=""):
 
 if __name__ == "__main__":
     workbook, sheet = main("data.xlsx")
-    update_realtime_data(["0050","0052"],sheet)
+    while 1:
+        update_realtime_data(["1232","2105","2308"],sheet)
+        time.sleep(3)
     
