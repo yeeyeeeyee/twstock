@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-import pandas as pd
 import xlwings as xw
 
 
@@ -218,7 +217,7 @@ class end:
     #判斷
     def judge(self):
         url = f"https://tw.stock.yahoo.com/quote/{self.code}.TW"
-        response = requests.get(url)
+        response = requests.get(url,timeout=5)
         yahoo = BeautifulSoup(response.text, "html.parser")
         span_elements = yahoo.find_all("title")
 
@@ -226,10 +225,10 @@ class end:
         #如果tw找不到就換TWO
         if span_elements == []:
             url = f"https://tw.stock.yahoo.com/quote/{self.code}.TWO"
-            response = requests.get(url)
+            response = requests.get(url,timeout=5)
             yahoo = BeautifulSoup(response.text, "html.parser")
             span_elements = yahoo.find_all("title")
-        
+        print(span_elements)
 
         #判斷是否為個股
         url += "/profile"
@@ -238,6 +237,8 @@ class end:
 
         #yahoo重要行事曆
         elements =soup.find_all("div",class_="table-grid row-fit-half", attrs={"style": True})
+
+        #載入資料
         #個股
         if len(elements)==4:
             self.get_PE()
@@ -269,51 +270,8 @@ class end:
         #print("\n")
 
     def input_data(self,sheet):
-        url = f"https://tw.stock.yahoo.com/quote/{self.code}.TW"
-        response = requests.get(url)
-        yahoo = BeautifulSoup(response.text, "html.parser")
-        span_elements = yahoo.find_all("title")
-
-        
-        #如果tw找不到就換TWO
-        if span_elements == []:
-            url = f"https://tw.stock.yahoo.com/quote/{self.code}.TWO"
-            response = requests.get(url)
-            yahoo = BeautifulSoup(response.text, "html.parser")
-            span_elements = yahoo.find_all("title")
-        
-        print(span_elements)
-        #判斷是否為個股
-        url += "/profile"
-        response = requests.get(url)
-        soup = BeautifulSoup(response.text, "html.parser")
-
-        #yahoo重要行事曆
-        elements =soup.find_all("div",class_="table-grid row-fit-half", attrs={"style": True})
-        #個股
-        if len(elements)==4:
-            self.get_PE()
-            self.get_PB()
-            self.杜邦分析()
-            self.NAVPS(soup)
-            self.三率()
-            self.流速動比率()
-            self.負債比()
-            self.營運週轉天數()
-            self.get_利息保障倍數()
-            self.get_盈餘再投資比()
-
-
-            self.yesterday_close(yahoo)
-            self.股息發放日_person(soup)
-            self.財務報表()
-        #ETF
-        else:
-            self.ManagementFee(soup)
-            self.股息發放日_ETF(soup)
-            self.財務報表()
-            self.yesterday_close(yahoo)
-
+        #執行判斷股票 etf or person 且傳入資料
+        self.judge()
 
         data=[
             self.昨收 ,
