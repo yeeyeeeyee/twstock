@@ -35,8 +35,9 @@ workbook,sheet = get_stock.main(file,sheet_name)
 error_count = 0  # 错误计数器
 
 #資料
+print("讀取資料")
 stock_end.update_data(data_list,sheet)
-
+print("即時資料-開始:")
 
 while now < closing_time:
 #while 1:
