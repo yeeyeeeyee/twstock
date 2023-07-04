@@ -41,13 +41,13 @@ class end:
     def yesterday_close(self,soup):
         close=soup.find("span",class_="Fw(600) Fz(16px)--mobile Fz(14px) D(f) Ai(c)")
         self.昨收=close.text
-        #print(f"昨收:{close.text}")
+        print(f"昨收:{close.text}")
                 
     #管理費
     def ManagementFee(self,soup):
         elements =soup.find("div",class_="Py(8px) Pstart(12px) Bxz(bb) etf-management-fee")
         self.管理費=elements.text
-        #print(f"管理費:{elements.text}")
+        print(f"管理費:{elements.text}")
 
     def 股息發放日_ETF(self,soup):
         elements =soup.find_all("div",class_="table-grid Mb(20px) row-fit-half")
@@ -55,7 +55,7 @@ class end:
         second_element=elements[0]
         desired_elements=second_element.find_all("div",class_="Py(8px) Pstart(12px) Bxz(bb)")
         self.股息發放日=desired_elements[-1].text
-        #print(f'股息發放日:{desired_elements[-1].text}')
+        print(f'股息發放日:{desired_elements[-1].text}')
     
         
     #-------------------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ class end:
         second_element=elements[1]
         find= second_element.find_all("div",class_="Py(8px) Pstart(12px) Bxz(bb)")
         self.股息發放日=find[-1].text
-        #print(f"股息發放日:{find[-1].text}")
+        print(f"股息發放日:{find[-1].text}")
         
 
     #市盈率(PE)
@@ -74,7 +74,7 @@ class end:
         soup = BeautifulSoup(response.text, "html.parser")
         span_elements = soup.find("td", attrs={"style": True})
         self.市盈率=span_elements.text
-        #print(f"市盈率:{span_elements.text}")
+        print(f"市盈率:{span_elements.text}")
         
 
     #市淨率
@@ -84,7 +84,7 @@ class end:
         soup = BeautifulSoup(response.text, "html.parser")
         span_elements = soup.find("td", attrs={"style": True})
         self.市淨率=span_elements.text
-        #print(f"市淨率:{span_elements.text}")
+        print(f"市淨率:{span_elements.text}")
         
 
     def 財務報表(self):
@@ -96,22 +96,22 @@ class end:
         #除權日
         if elements[2].text!="":
             self.除權日=elements[2].text
-        #print(f'除權日:{elements[2].text}')
+        print(f'除權日:{elements[2].text}')
         #除息日
         self.除息日=f'{elements[1].text}/{elements[3].text}'
-        #print(f'除息日:{elements[1].text}/{elements[3].text}')
+        print(f'除息日:{elements[1].text}/{elements[3].text}')
         #股票股利
         self.股票股利=elements[5].text
-        #print(f'股票股利:{elements[5].text}')
+        print(f'股票股利:{elements[5].text}')
         #現金股利
         self.現金股利=elements[6].text
-        #print(f'現金股利:{elements[6].text}')
+        print(f'現金股利:{elements[6].text}')
         #EPS(盈餘)
         self.盈餘=elements[7].text
-        #print(f'EPS:{elements[7].text}')
+        print(f'EPS:{elements[7].text}')
         #現金殖利率(殖利率)
         self.殖利率=elements[9].text
-        #print(f'現金殖利率:{elements[9].text}')
+        print(f'現金殖利率:{elements[9].text}')
         
 
     def 杜邦分析(self):
@@ -122,10 +122,10 @@ class end:
         elements = soup.find_all("td")
         #ROE
         self.ROE=elements[1].text
-        #print(f"ROE:{elements[1].text}")
+        print(f"ROE:{elements[1].text}")
         #ROA
         self.資產報酬率=elements[2].text
-        
+        print(f"資產報酬率:{elements[2].text}")
         
 
     #每股淨值
@@ -133,7 +133,7 @@ class end:
         elements =soup.find("div",class_="table-grid Mb(20px) row-fit-half", attrs={"style": True})
         second_element=elements.find_all("div",class_="Py(8px) Pstart(12px) Bxz(bb)")
         self.每股淨值=second_element[-1].text
-        #print(f"淘汰股散:{second_element[-1].text}")
+        print(f"淘汰股散:{second_element[-1].text}")
         
         
 
@@ -145,13 +145,13 @@ class end:
         elements = soup.find_all("td")
         #毛利率
         self.毛利率=elements[1].text
-        #print(f"毛利率:{elements[1].text}")
+        print(f"毛利率:{elements[1].text}")
         #營益率
         self.營益率=elements[2].text
-        #print(f"營益率:{elements[2].text}")
+        print(f"營益率:{elements[2].text}")
         #稅後淨利率
         self.稅後淨利率=elements[4].text
-        ##print(f"淨利率:{elements[4].text}")
+        print(f"淨利率:{elements[4].text}")
         
 
     def 流速動比率(self):
@@ -162,10 +162,10 @@ class end:
         elements = soup.find_all("td")
         #流動比
         self.流動比率=elements[1].text
-        #print(f"流動比:{elements[1].text}")
+        print(f"流動比:{elements[1].text}")
         #速動比
         self.速動比率=elements[2].text
-        #print(f"速動比:{elements[2].text}")
+        print(f"速動比:{elements[2].text}")
         
 
     def 負債比(self):
@@ -176,7 +176,7 @@ class end:
         elements = soup.find_all("td")
         #負債比
         self.負債比率=elements[1].text
-        #print(f"負債比:{elements[1].text}")
+        print(f"負債比:{elements[1].text}")
         
 
     def get_利息保障倍數(self):
@@ -187,7 +187,7 @@ class end:
         elements = soup.find_all("td")
         #利息保障倍數
         self.利息保障倍數=elements[1].text
-        #print(f"利息保障倍數:{elements[1].text}")
+        print(f"利息保障倍數:{elements[1].text}")
         
 
     def 營運週轉天數(self):
@@ -198,10 +198,10 @@ class end:
         elements = soup.find_all("td")
         #應收帳款收現天數
         self.應收帳款收現天數=elements[1].text
-        #print(f"應收帳款收現天數:{elements[1].text}")
+        print(f"應收帳款收現天數:{elements[1].text}")
         #存貨週轉天數
         self.存貨週轉天數=elements[2].text
-        #print(f"存貨週轉天數:{elements[2].text}")
+        print(f"存貨週轉天數:{elements[2].text}")
         
 
     def get_盈餘再投資比(self):
@@ -212,7 +212,7 @@ class end:
         elements = soup.find_all("td")
         #盈餘再投資比
         self.盈餘再投資比=elements[1].text
-        #print(f"盈餘再投資比:{elements[1].text}")
+        print(f"盈餘再投資比:{elements[1].text}")
 
     #判斷
     def judge(self):
