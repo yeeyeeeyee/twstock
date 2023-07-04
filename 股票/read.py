@@ -54,7 +54,7 @@ while now < closing_time:
         if error_count >= 2:
             exit()  # 达到错误次数上限，关闭程序
         workbook,sheet = get_stock.main(file,sheet_name)
-
+print("結束")
 
 
 
