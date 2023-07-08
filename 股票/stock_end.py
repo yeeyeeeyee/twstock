@@ -32,6 +32,7 @@ class end:
         self.股息發放日 = "-"
         self.除權日 = "-"
         self.盈餘再投資比 = "-"
+        self.現金流="-"
         self.管理費 = "-"
             
     
@@ -216,8 +217,19 @@ class end:
         self.盈餘再投資比=elements[1].text
         print(f"盈餘再投資比:{elements[1].text}")
 
+    def get_現金流(self,url):
+        url = url+"/cash-flow-statement"
+        response = requests.get(url,timeout=5)
+        soup = BeautifulSoup(response.text, "html.parser")
 
-    def person(self,yahoo,soup):
+        li = soup.find_all("li",class_="List(n)")[3]
+        elements=li.find_all("span")
+        self.現金流=elements[1].text
+        #現金流
+        print(f"現金流:{elements[1].text}")
+
+
+    def person(self,yahoo,soup,Tw_Or_Two):
         threads=[]
         threads.append(threading.Thread(target=self.get_PE))
         threads.append(threading.Thread(target=self.get_PB))
@@ -231,12 +243,13 @@ class end:
         threads.append(threading.Thread(target=self.get_盈餘再投資比))
         threads.append(threading.Thread(target=self.yesterday_close,args=(yahoo,)))
         threads.append(threading.Thread(target=self.股息發放日_person,args=(soup,)))
+        threads.append(threading.Thread(target=self.get_現金流,args=(Tw_Or_Two,)))
         threads.append(threading.Thread(target=self.財務報表))
         for thread in threads:
             thread.start()
         for thread in threads:
             thread.join()
-
+    
 
 
     #判斷
@@ -254,6 +267,7 @@ class end:
             yahoo = BeautifulSoup(response.text, "html.parser")
             span_elements = yahoo.find_all("title")
         print(span_elements)
+        Tw_Or_Two=url
 
         #判斷是否為個股
         url += "/profile"
@@ -266,7 +280,7 @@ class end:
         #載入資料
         #個股
         if len(elements)==4:
-            self.person(yahoo,soup)
+            self.person(yahoo,soup,Tw_Or_Two)
         #ETF
         else:
             self.ManagementFee(soup)
@@ -308,10 +322,11 @@ class end:
             self.股息發放日 ,
             self.除權日 ,
             self.盈餘再投資比 ,
+            self.現金流,
             self.管理費 ,
         ]
          #設置P到AM
-        range_address = f"P{self.row}:AM{self.row}"
+        range_address = f"P{self.row}:AN{self.row}"
         #從設置的填入資料
         sheet.range(range_address).value = data
         #自動調整名稱寬度
@@ -344,7 +359,7 @@ def main(file,sheet_name:str=""):
 
 if __name__ == '__main__':
   workbook, sheet = main("data.xlsx")
-  update_data(["1232","2105","2308"],sheet)
+  update_data(["2912","2105","2308"],sheet)
 
     
     
