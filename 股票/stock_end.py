@@ -2,13 +2,14 @@ import requests
 from bs4 import BeautifulSoup
 import xlwings as xw
 import threading
-
+import time
 
 #=============================================================
 class end:
     def __init__(self,code,row):
         self.code=code
         self.row=row
+        self.current_code=""
         self.昨收 = "-"
         self.市盈率 = "-"
         self.市淨率 = "-"
@@ -73,6 +74,12 @@ class end:
     def get_PE(self):
         url = f"https://histock.tw/stock/{self.code}/%E6%9C%AC%E7%9B%8A%E6%AF%94"
         response = requests.get(url,timeout=5)
+        #測試當前狀態 抓不到則結束程式
+        try:
+            status_code=statu(response)
+        except:
+            print(f"請求失敗!當前股票{self.current_code}\n狀態碼:{status_code}")
+            exit()
         soup = BeautifulSoup(response.text, "html.parser")
         span_elements = soup.find("td", attrs={"style": True})
         self.市盈率=span_elements.text
@@ -83,6 +90,12 @@ class end:
     def get_PB(self):
         url = f"https://histock.tw/stock/{self.code}/%E8%82%A1%E5%83%B9%E6%B7%A8%E5%80%BC%E6%AF%94"
         response = requests.get(url,timeout=5)
+        #測試當前狀態 抓不到則結束程式
+        try:
+            status_code=statu(response)
+        except:
+            print(f"請求失敗!當前股票{self.current_code}\n狀態碼:{status_code}")
+            exit()
         soup = BeautifulSoup(response.text, "html.parser")
         span_elements = soup.find("td", attrs={"style": True})
         self.市淨率=span_elements.text
@@ -92,6 +105,12 @@ class end:
     def 財務報表(self):
         url = f"https://histock.tw/stock/{self.code}/%E9%99%A4%E6%AC%8A%E9%99%A4%E6%81%AF"
         response = requests.get(url,timeout=5)
+        #測試當前狀態 抓不到則結束程式
+        try:
+            status_code=statu(response)
+        except:
+            print(f"請求失敗!當前股票{self.current_code}\n狀態碼:{status_code}")
+            exit()
         soup = BeautifulSoup(response.text, "html.parser")
 
         elements = soup.find_all("td")
@@ -120,6 +139,12 @@ class end:
     def 杜邦分析(self):
         url = f"https://histock.tw/stock/{self.code}/%E5%A0%B1%E9%85%AC%E7%8E%87"
         response = requests.get(url,timeout=5)
+        #測試當前狀態 抓不到則結束程式
+        try:
+            status_code=statu(response)
+        except:
+            print(f"請求失敗!當前股票{self.current_code}\n狀態碼:{status_code}")
+            exit()
         soup = BeautifulSoup(response.text, "html.parser")
 
         elements = soup.find_all("td")
@@ -143,6 +168,12 @@ class end:
     def 三率(self):
         url = f"https://histock.tw/stock/{self.code}/%E5%88%A9%E6%BD%A4%E6%AF%94%E7%8E%87"
         response = requests.get(url,timeout=5)
+        #測試當前狀態 抓不到則結束程式
+        try:
+            status_code=statu(response)
+        except:
+            print(f"請求失敗!當前股票{self.current_code}\n狀態碼:{status_code}")
+            exit()
         soup = BeautifulSoup(response.text, "html.parser")
 
         elements = soup.find_all("td")
@@ -160,6 +191,12 @@ class end:
     def 流速動比率(self):
         url = f"https://histock.tw/stock/{self.code}/%E6%B5%81%E9%80%9F%E5%8B%95%E6%AF%94%E7%8E%87"
         response = requests.get(url,timeout=5)
+        #測試當前狀態 抓不到則結束程式
+        try:
+            status_code=statu(response)
+        except:
+            print(f"請求失敗!當前股票{self.current_code}\n狀態碼:{status_code}")
+            exit()
         soup = BeautifulSoup(response.text, "html.parser")
 
         elements = soup.find_all("td")
@@ -174,6 +211,12 @@ class end:
     def 負債比(self):
         url = f"https://histock.tw/stock/{self.code}/%E8%B2%A0%E5%82%B5%E4%BD%94%E8%B3%87%E7%94%A2%E6%AF%94"
         response = requests.get(url,timeout=5)
+        #測試當前狀態 抓不到則結束程式
+        try:
+            status_code=statu(response)
+        except:
+            print(f"請求失敗!當前股票{self.current_code}\n狀態碼:{status_code}")
+            exit()
         soup = BeautifulSoup(response.text, "html.parser")
 
         elements = soup.find_all("td")
@@ -185,6 +228,12 @@ class end:
     def get_利息保障倍數(self):
         url = f"https://histock.tw/stock/{self.code}/%E5%88%A9%E6%81%AF%E4%BF%9D%E9%9A%9C%E5%80%8D%E6%95%B8"
         response = requests.get(url,timeout=5)
+        #測試當前狀態 抓不到則結束程式
+        try:
+            status_code=statu(response)
+        except:
+            print(f"請求失敗!當前股票{self.current_code}\n狀態碼:{status_code}")
+            exit()
         soup = BeautifulSoup(response.text, "html.parser")
 
         elements = soup.find_all("td")
@@ -196,6 +245,12 @@ class end:
     def 營運週轉天數(self):
         url = f"https://histock.tw/stock/{self.code}/%E7%87%9F%E9%81%8B%E9%80%B1%E8%BD%89%E5%A4%A9%E6%95%B8"
         response = requests.get(url,timeout=5)
+        #測試當前狀態 抓不到則結束程式
+        try:
+            status_code=statu(response)
+        except:
+            print(f"請求失敗!當前股票{self.current_code}\n狀態碼:{status_code}")
+            exit()
         soup = BeautifulSoup(response.text, "html.parser")
 
         elements = soup.find_all("td")
@@ -210,6 +265,12 @@ class end:
     def get_盈餘再投資比(self):
         url = f"https://histock.tw/stock/{self.code}/%E7%9B%88%E9%A4%98%E5%86%8D%E6%8A%95%E8%B3%87%E6%AF%94%E7%8E%87"
         response = requests.get(url,timeout=5)
+        #測試當前狀態 抓不到則結束程式
+        try:
+            status_code=statu(response)
+        except:
+            print(f"請求失敗!當前股票{self.current_code}\n狀態碼:{status_code}")
+            exit()
         soup = BeautifulSoup(response.text, "html.parser")
 
         elements = soup.find_all("td")
@@ -220,6 +281,12 @@ class end:
     def get_現金流(self,url):
         url = url+"/cash-flow-statement"
         response = requests.get(url,timeout=5)
+        #測試當前狀態 抓不到則結束程式
+        try:
+            status_code=statu(response)
+        except:
+            print(f"請求失敗!當前股票{self.current_code}\n狀態碼:{status_code}")
+            exit()
         soup = BeautifulSoup(response.text, "html.parser")
 
         li = soup.find_all("li",class_="List(n)")[3]
@@ -257,16 +324,24 @@ class end:
         url = f"https://tw.stock.yahoo.com/quote/{self.code}.TW"
         response = requests.get(url,timeout=5)
         yahoo = BeautifulSoup(response.text, "html.parser")
-        span_elements = yahoo.find_all("title")
+        self.current_code = yahoo.find_all("title")
 
         
         #如果tw找不到就換TWO
-        if span_elements == []:
+        if self.current_code == []:
             url = f"https://tw.stock.yahoo.com/quote/{self.code}.TWO"
             response = requests.get(url,timeout=5)
             yahoo = BeautifulSoup(response.text, "html.parser")
-            span_elements = yahoo.find_all("title")
-        print(span_elements)
+            self.current_code = yahoo.find_all("title")
+
+        print(self.current_code)
+        #測試當前狀態 抓不到則結束程式
+        try:
+            status_code=statu(response)
+        except:
+            print(f"請求失敗!當前股票{self.current_code}\n狀態碼:{status_code}")
+            exit()
+
         Tw_Or_Two=url
 
         #判斷是否為個股
@@ -290,7 +365,7 @@ class end:
 
         #---------------------------------------
         
-        #print(span_elements)
+
         #print(url)
         print("\n")
 
@@ -333,6 +408,20 @@ class end:
         sheet.autofit()
 
 
+#連接url如果狀態!=200就重抓一次
+def statu(response):
+    #次數
+    count=0
+    while response.status_code != 200:
+        count+=1
+        if count == 3:
+            break
+        time.sleep(1)
+        response = requests.get(response.url)
+
+    return response.status_code
+        
+    
 
 #盤中抓即時資料
 def update_data(codes:list,sheet):

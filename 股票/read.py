@@ -37,7 +37,7 @@ workbook,sheet = get_stock.main(write_file,write_sheet)
 
 #測試用
 
-#其他資料
+#詳細資料
 #stock_end.update_data(data_list,sheet)
 #即時資料
 #get_stock.update_realtime_data(data_list,sheet)
@@ -67,7 +67,7 @@ while now < closing_time:
         workbook,sheet = get_stock.main(write_file,write_sheet)
 
 #最後補齊即時資料
-#get_stock.update_realtime_data(data_list,sheet)
+get_stock.update_realtime_data(data_list,sheet)
 
 print("結束")
 
