@@ -31,7 +31,7 @@ print(data_list)
 # 取得現在的時間
 now = datetime.now().time()
 # 設定下午1點半的時間
-closing_time = time(13, 35)
+closing_time = time(13, 40)
 
 workbook,sheet = get_stock.main(write_file,write_sheet)
 
