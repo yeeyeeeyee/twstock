@@ -321,18 +321,10 @@ class end:
 
     #判斷
     def judge(self):
-        url = f"https://tw.stock.yahoo.com/quote/{self.code}.TW"
+        url = f"https://tw.stock.yahoo.com/quote/{self.code}"
         response = requests.get(url,timeout=5)
         yahoo = BeautifulSoup(response.text, "html.parser")
         self.current_code = yahoo.find_all("title")
-
-        
-        #如果tw找不到就換TWO
-        if self.current_code == []:
-            url = f"https://tw.stock.yahoo.com/quote/{self.code}.TWO"
-            response = requests.get(url,timeout=5)
-            yahoo = BeautifulSoup(response.text, "html.parser")
-            self.current_code = yahoo.find_all("title")
 
         print(self.current_code)
         #測試當前狀態 抓不到則結束程式
