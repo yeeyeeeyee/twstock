@@ -56,11 +56,16 @@ now = datetime.now().time()
 # 設定下午1點半的時間
 closing_time = time(13, 40)
 
+# 另存为新文件
+import save_as
+save_as.save_as(read_file)
+
 #開啟檔案
 workbook,sheet=open_excel_file(write_file,write_sheet)
 
 
 
+""" 
 
 error_count = 0  # 错误计数器
 
@@ -97,6 +102,8 @@ workbook,sheet=open_excel_file(read_file,read_sheet)
 classification.classification(data_list,sheet)
 print("資料分類-結束")
 input("------請按任意鍵結束-------")
+
+ """
 #-------------------------------------------------------------------------
  #測試用
 
