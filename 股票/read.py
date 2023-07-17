@@ -64,9 +64,6 @@ save_as.save_as(read_file)
 workbook,sheet=open_excel_file(write_file,write_sheet)
 
 
-
-""" 
-
 error_count = 0  # 错误计数器
 
 #資料
@@ -103,7 +100,7 @@ classification.classification(data_list,sheet)
 print("資料分類-結束")
 input("------請按任意鍵結束-------")
 
- """
+
 #-------------------------------------------------------------------------
  #測試用
 
