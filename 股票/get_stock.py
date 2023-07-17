@@ -138,19 +138,20 @@ def update_realtime_data(codes,sheet):
     sheet.book.save()
 
 
-def main(file,sheet_name:str=""):
-    try:
-        workbook = xw.Book(file)
-    except:
-        app = xw.App(visible=True, add_book=False)
-        workbook = app.books.open(file)
-    if sheet_name == "":
-        sheet = workbook.sheets.active
-    else:
-        sheet = workbook.sheets[sheet_name]
-    return workbook, sheet
+
 
 if __name__ == "__main__":
+    def main(file,sheet_name:str=""):
+        try:
+            workbook = xw.Book(file)
+        except:
+            app = xw.App(visible=True, add_book=False)
+            workbook = app.books.open(file)
+        if sheet_name == "":
+            sheet = workbook.sheets.active
+        else:
+            sheet = workbook.sheets[sheet_name]
+        return workbook, sheet
     workbook, sheet = main("data.xlsx")
     while 1:
         update_realtime_data(["1232","2105","2308"],sheet)

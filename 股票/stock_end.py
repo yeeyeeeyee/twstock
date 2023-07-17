@@ -321,18 +321,10 @@ class end:
 
     #判斷
     def judge(self):
-        url = f"https://tw.stock.yahoo.com/quote/{self.code}.TW"
+        url = f"https://tw.stock.yahoo.com/quote/{self.code}"
         response = requests.get(url,timeout=5)
         yahoo = BeautifulSoup(response.text, "html.parser")
         self.current_code = yahoo.find_all("title")
-
-        
-        #如果tw找不到就換TWO
-        if self.current_code == []:
-            url = f"https://tw.stock.yahoo.com/quote/{self.code}.TWO"
-            response = requests.get(url,timeout=5)
-            yahoo = BeautifulSoup(response.text, "html.parser")
-            self.current_code = yahoo.find_all("title")
 
         print(self.current_code)
         #測試當前狀態 抓不到則結束程式
@@ -434,7 +426,10 @@ def update_data(codes:list,sheet):
     # 保存修改
     sheet.book.save()       
 
-def main(file,sheet_name:str=""):
+
+
+if __name__ == '__main__':
+  def main(file,sheet_name:str=""):
     try:
         workbook = xw.Book(file)
     except:
@@ -445,8 +440,6 @@ def main(file,sheet_name:str=""):
     else:
         sheet = workbook.sheets[sheet_name]
     return workbook, sheet
-
-if __name__ == '__main__':
   workbook, sheet = main("data.xlsx")
   update_data(["2912","2105","2308"],sheet)
 

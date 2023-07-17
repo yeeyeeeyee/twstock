@@ -1,3 +1,5 @@
-#注意昨收的資料
-
-資料  做成josn後讀取    Or 讀取儲存格
+製作setting 做成gui介面
+stock_end 做成顯眼的指標
+重構程式碼
+執行前備份檔案
+classification 多線程
