@@ -426,7 +426,10 @@ def update_data(codes:list,sheet):
     # 保存修改
     sheet.book.save()       
 
-def main(file,sheet_name:str=""):
+
+
+if __name__ == '__main__':
+  def main(file,sheet_name:str=""):
     try:
         workbook = xw.Book(file)
     except:
@@ -437,8 +440,6 @@ def main(file,sheet_name:str=""):
     else:
         sheet = workbook.sheets[sheet_name]
     return workbook, sheet
-
-if __name__ == '__main__':
   workbook, sheet = main("data.xlsx")
   update_data(["2912","2105","2308"],sheet)
 
