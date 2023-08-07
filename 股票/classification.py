@@ -22,7 +22,7 @@ def classification(data_list:list,read_sheet):
                 if read_sheet.range(f'A{n}').value != wb.sheets[i].range('A5').value:
                     wb.sheets[i].range("4:4").api.Insert()
                 #複製
-                read_sheet.range(f'A{n}:p{n}').api.Copy(wb.sheets[i].range('A5').api)
+                read_sheet.range(f'A{n}:o{n}').api.Copy(wb.sheets[i].range('A5').api)
                 """ 
                 #字中對齊
                 wb.sheets[i].range('A5:P5').api.HorizontalAlignment = -4108
