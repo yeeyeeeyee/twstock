@@ -6,9 +6,9 @@
     "write_file":"99.xlsx",
     "write_sheet":"new title",
     "//等待":"布林值",
-    "save":false,
+    "save":true,
     "check_wait":false,
-    "ending_wait":true
+    "ending_wait":false
 
   }
   
