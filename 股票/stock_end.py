@@ -338,7 +338,7 @@ class end:
 
         #判斷是否為個股
         url += "/profile"
-        response = requests.get(url)
+        response = requests.get(url,timeout=5)
         soup = BeautifulSoup(response.text, "html.parser")
 
         #yahoo重要行事曆
