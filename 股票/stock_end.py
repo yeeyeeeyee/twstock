@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import xlwings as xw
 import threading
 import time
+import re
 
 #=============================================================
 class end:
@@ -357,14 +358,10 @@ class end:
 
         #---------------------------------------
         
-
         #print(url)
         print("\n")
-
-    def input_data(self,sheet):
-        #執行判斷股票 etf or person 且傳入資料
-        self.judge()
-
+    #確認是否抓的到資料,如果抓不到,就把資料全部變成"0"後,打印出來
+    def check_data(self) -> list: 
         data=[
             self.昨收 ,
             self.市盈率 ,
@@ -391,7 +388,18 @@ class end:
             self.盈餘再投資比 ,
             self.現金流,
             self.管理費 ,
-        ]
+            ]
+            
+        #判斷是否有中文
+        for index, item in enumerate(data):
+            if re.search(r'[\u4e00-\u9fa5]', item):
+                data[index] = "無資料"
+        return data
+
+    def input_data(self,sheet):
+        #執行判斷股票 etf or person 且傳入資料
+        self.judge()
+        data=self.check_data()
          #設置P到AM
         range_address = f"P{self.row}:AN{self.row}"
         #從設置的填入資料
@@ -415,8 +423,8 @@ def statu(response):
         
     
 
-#盤中抓即時資料
-def update_data(codes:list,sheet):
+#盤後抓取資料
+def update_data(codes:list,sheet)-> None:
     stock_data = codes
     row = 2
     for  data in stock_data:
