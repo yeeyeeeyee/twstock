@@ -360,6 +360,7 @@ class end:
         
         #print(url)
         print("\n")
+        
     #確認是否抓的到資料,如果抓不到,就把資料全部變成"0"後,打印出來
     def check_data(self) -> list: 
         data=[
