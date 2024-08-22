@@ -153,7 +153,9 @@ if __name__ == "__main__":
             sheet = workbook.sheets[sheet_name]
         return workbook, sheet
     workbook, sheet = main("data.xlsx")
+    update_realtime_data(["1232","2105","2308"],sheet)
+    """ 
     while 1:
         update_realtime_data(["1232","2105","2308"],sheet)
-        time.sleep(3)
+        time.sleep(3) """
     
